@@ -1,4 +1,5 @@
 import random
+from collections import namedtuple
 
 def create_matrix(threshold = 0.5):
     # Variables: Number of rows, columns.
@@ -6,18 +7,29 @@ def create_matrix(threshold = 0.5):
     cols = 100
     matrix = []
 
-# Creating a matrix filled with 0.
+    dobut_value = [1,2,3,4]
+    # define the namedtuple
+    Cell = namedtuple('Cell', ['doubt', 'recieved_rumor','recieved_gen','passed_gen', 'num_neighbors', 'counter'])
+
+    # Creating a matrix filled with 0.
     for i in range(rows):
         row = []
         for j in range(cols):
-            row.append(0)
+            if random.uniform(0, 1) >= threshold:
+                # If larger than threshold than the cell is filled human.
+                # The doubtness level is assigned.
+                row.append(Cell(random.choice(dobut_value), False, 0, 0, 0, 0))
+            else: 
+                row.append(Cell(0, False, 0, 0, 0, 0)) 
         matrix.append(row)
 
-    for i in range(rows):
-        for j in range(cols):
-            # Filling the matrix according to the threshold.
-            if random.uniform(0, 1) < threshold:
-                matrix[i][j] = 0
-            else:
-                matrix[i][j] = 1
+    return matrix
 
+create_matrix()
+
+def Game_flow():
+    create_matrix()
+    # choose the first player
+    # Graphics 
+    # pass the rumor 
+    # variable of iterations. 
