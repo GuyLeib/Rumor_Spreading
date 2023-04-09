@@ -30,15 +30,16 @@ def create_matrix(threshold=0.5):
             if random.uniform(0, 1) >= threshold:
                 # If larger than threshold than the cell is filled human.
                 # The doubtness level is assigned.
-                row.append(Cell(random.choice(doubt_value), False, 0, 0, 0, 0, 100))
+                row.append(Cell(random.choice(doubt_value), False, 0, 0, 0, 0, 0))
             else:
-                row.append(Cell(0, False, 0, 0, 0, 0, 100))
+                row.append(Cell(0, False, 0, 0, 0, 0, 0))
         matrix.append(row)
 
     return matrix
 
 
-def choose_first(matrix):
+def choose_first():
+    global matrix
     is_staffed = False
     while not is_staffed:
         row = random.randint(0, 99)
@@ -49,6 +50,7 @@ def choose_first(matrix):
 
 
 def believe_rumor(doubt_level):
+    print(random.uniform(0, 1))
     if doubt_level == 1:
         return True
     elif doubt_level == 2:
@@ -73,17 +75,30 @@ def define_temp_doubt(doubt):
 
 
 def get_rumor(cell):
+    global game_counter
     # check if cell is not none:
     print("line 77")
     if cell.doubt == 0:
         return cell
-    global game_counter
-    # check if the neighbor a te the received generation:
-    cell = cell._replace(received_gen=game_counter)
+    if not cell.received_rumor:
+        # Update the cell
+        cell = cell._replace(received_gen=game_counter)
+        cell = cell._replace(received_rumor=True)
+        print('got the rumor')
+        cell = cell._replace(num_neighbors=cell.num_neighbors + 1)
+    else:
+        if cell.received_gen != game_counter:
+            cell = cell._replace(num_neighbors=1)
+        else:
+            cell = cell._replace(num_neighbors=cell.num_neighbors + 1)
+        if cell.num_neighbors >= 2 and cell.received_gen == game_counter:
+            # update temp_doubt:
+            cell = cell._replace(temp_doubt=define_temp_doubt(cell.doubt))
     return cell
 
 
-def spread_to_neighbors(row, column, matrix):
+def spread_to_neighbors(row, column):
+    global matrix
     global game_counter
     print("line 101")
     # spread the rumor to all neighbors while making sure they exist:
@@ -104,32 +119,42 @@ def spread_to_neighbors(row, column, matrix):
         if column < 99:
             matrix[row][column + 1] = get_rumor(matrix[row][column + 1])
 
-    return matrix
 
-
-def pass_rumor(matrix, gen_lim):
+def pass_rumor():
+    global matrix
+    global gen_lim
     # Loop over all the board:
     for i in range(100):
         for j in range(100):
-            if matrix[i][j] is not None:
-                if matrix[i][j].received_rumor == True:
-                    spread_to_neighbors(i, j, matrix)
-                # if the cell already spread the rumor + the generation is game_counter-1 + l_counter ==0:
-                if matrix[i][j].received_rumor and matrix[i][j].received_gen == game_counter - 1 and matrix[i][
-                    j].counter == 0:
-                    # check if the cell has a temp doubt:
-                    if matrix[i][j].temp_doubt != 0:
-                        believe = believe_rumor(matrix[i][j].temp_doubt)
-                    else:
+            if matrix[i][j].doubt != 0:
+                if matrix[i][j].received_rumor:
+                    print('recived rumor true found')
+                    # Condition for the first one to pass the rumor.
+                    if matrix[i][j].received_gen == game_counter and game_counter == 0:
                         believe = believe_rumor(matrix[i][j].doubt)
-                    # check if the cell believes the rumor, if so- spread to neighbors:
-                    if believe:
-                        # update L counter:
-                        matrix[i][j] = matrix[i][j]._replace(counter=gen_lim)
-                        # update the passing generation:
-                        matrix[i][j].passed_gen = game_counter
+                        if believe:
+                            print('believed')
+                            spread_to_neighbors(i, j)
+                            # update L counter:
+                            matrix[i][j] = matrix[i][j]._replace(counter=gen_lim)
+                        # if the cell already spread the rumor + the generation is game_counter-1 + l_counter ==0:
+                    if matrix[i][j].received_gen == game_counter - 1 and matrix[i][j].counter == 0:
+                        print('condition')
+                        # check if the cell has a temp doubt:
+                        if matrix[i][j].temp_doubt != 0:
+                            believe = believe_rumor(matrix[i][j].temp_doubt)
+                        else:
+                            believe = believe_rumor(matrix[i][j].doubt)
+                        # check if the cell believes the rumor, if so- spread to neighbors:
+                        if believe:
+                            print('believe')
+                            # update L counter:
+                            matrix[i][j] = matrix[i][j]._replace(counter=gen_lim)
+                            # update the passing generation:
+                            matrix[i][j] = matrix[i][j]._replace(passed_gen=game_counter)
+                            # Spread the rumor to neighbors
+                            spread_to_neighbors(i, j)
 
-                        matrix = spread_to_neighbors(i, j, matrix)
                 if matrix[i][j].counter != 0:
                     # decrement the L counter:
                     matrix[i][j] = matrix[i][j]._replace(counter=matrix[i][j].counter - 1)
@@ -177,7 +202,7 @@ def choose_first_wrapper():
     global matrix
     global game_counter
     canvas.delete('all')
-    row, column = choose_first(matrix)
+    row, column = choose_first()
     matrix[row][column] = matrix[row][column]._replace(received_rumor=True)
     matrix[row][column] = matrix[row][column]._replace(received_gen=game_counter)
     print(row, column)
@@ -191,12 +216,19 @@ def pass_rumor_wrapper():
     global game_counter
     global matrix
     canvas.delete('all')
-    pass_rumor(matrix, gen_lim)
+    pass_rumor()
     game_counter += 1
     root.update()
     print('line 198')
     draw_all_cells(matrix, True)
     root.update()
+
+def get_stats():
+    # How many new believers for each iteration
+
+    #
+
+    pass
 
 
 def Game_flow():
@@ -218,6 +250,5 @@ def Game_flow():
 
 
 Game_flow()
-
 # Start the Tkinter event loop
 root.mainloop()
