@@ -1,21 +1,18 @@
 import random
 from collections import namedtuple
 import tkinter as tk
+from tkinter import simpledialog
 
 # Global Variables: Number of rows, columns and game counter.
 game_counter = 0
+gen_lim = 5
+threshold = 0.5
 rows = 100
 cols = 100
 
-# init the Graphics window
-# Create a Tkinter window
-root = tk.Tk()
-# Create a Canvas widget to display the matrix
-canvas = tk.Canvas(root, width=cols * 10, height=rows * 10)
-canvas.pack()
 
-
-def create_matrix(threshold=0.5):
+def create_matrix():
+    global threshold
     matrix = []
     # Possible value for dobutness level.
     doubt_value = [1, 2, 3, 4]
@@ -27,7 +24,7 @@ def create_matrix(threshold=0.5):
     for i in range(rows):
         row = []
         for j in range(cols):
-            if random.uniform(0, 1) >= threshold:
+            if random.uniform(0, 1) <= threshold:
                 # If larger than threshold than the cell is filled human.
                 # The doubtness level is assigned.
                 row.append(Cell(random.choice(doubt_value), False, 0, 0, 0, 0, 0))
@@ -192,11 +189,6 @@ def draw_all_cells(matrix, flag=False):
             draw_cell(matrix, i, j, flag)
 
 
-# Global variables for the Game flow
-gen_lim = 5
-matrix = create_matrix()
-
-
 # Wrapper function that is being called by the button.
 def choose_first_wrapper():
     global matrix
@@ -221,34 +213,182 @@ def pass_rumor_wrapper():
     root.update()
     print('line 198')
     draw_all_cells(matrix, True)
+    get_stats()
     root.update()
 
+# Prints the number of people knows the rumor in each iteration
 def get_stats():
-    # How many new believers for each iteration
-
-    #
-
-    pass
-
-
-def Game_flow():
-    global matrix
     global game_counter
-    game_over = False
-    # Print the initial matrix before the rumor.
-    draw_all_cells(matrix)
+    global matrix
+    # How many new believers for each iteration
+    counter = 0
+    for i in range(100):
+        for j in range(100):
+            if matrix[i][j].received_rumor:
+                counter += 1
+    print("Iteration {} : the rumor spread to {} people".format(game_counter, counter))
 
+
+def validate_float(input):
+    try:
+        value = float(input)
+        if 0 <= value <= 1:
+            return True
+        else:
+            return False
+    except ValueError:
+        return False
+
+
+# def validate_sum():
+#     try:
+#         value1 = float(number_entry1.get())
+#         value2 = float(number_entry2.get())
+#         value3 = float(number_entry3.get())
+#         value4 = float(number_entry4.get())
+#         if abs(value1 + value2 + value3 + value4 - 1) < 0.0001:
+#             return True
+#         else:
+#             return False
+#     except ValueError:
+#         return False
+
+# This function will get the desired configuration from the user.
+def get_user_input():
+    global threshold, gen_lim, s1, s2, s3, s4, matrix
+
+    # Create a new Toplevel window
+    user_input_window = tk.Toplevel()
+    user_input_window.geometry('400x300')  # Set window size
+
+    # Create a label widget for the title
+    title_label = tk.Label(user_input_window, text="Enter new configuration", font=("Arial", 18))
+    title_label.pack(pady=10)  # Add some padding
+
+    # Create input fields for threshold, gen_lim, and var3
+    threshold_label = tk.Label(user_input_window, text="Enter the desired population density:")
+    threshold_label.pack(pady=10)
+    threshold_entry = tk.Entry(user_input_window)
+    threshold_entry.pack(pady=5)
+
+    gen_lim_label = tk.Label(user_input_window, text="Enter the generation limitation of spreading rumor:")
+    gen_lim_label.pack(pady=10)
+    gen_lim_entry = tk.Entry(user_input_window)
+    gen_lim_entry.pack(pady=5)
+
+    s1_label = tk.Label(user_input_window, text="Enter the percentage of s1 people: (0-1)")
+    s1_label.pack(pady=10)
+    s1_entry = tk.Entry(user_input_window)
+    s1_entry.pack(pady=5)
+
+    s2_label = tk.Label(user_input_window, text="Enter the percentage of s2 people: (0-1)")
+    s2_label.pack(pady=10)
+    s2_entry = tk.Entry(user_input_window)
+    s2_entry.pack(pady=5)
+
+    s3_label = tk.Label(user_input_window, text="Enter the percentage of s3 people: (0-1)")
+    s3_label.pack(pady=10)
+    s3_entry = tk.Entry(user_input_window)
+    s3_entry.pack(pady=5)
+
+    s4_label = tk.Label(user_input_window, text="Enter the percentage of s4 people: (0-1)")
+    s4_label.pack(pady=10)
+    s4_entry = tk.Entry(user_input_window)
+    s4_entry.pack(pady=5)
+
+    # Create a button to submit the user input
+    submit_button = tk.Button(user_input_window, text="Submit",
+                              command=lambda: submit_user_input(user_input_window, threshold_entry, gen_lim_entry,
+                                                                s1_entry,s2_entry,s3_entry,s4_entry))
+    submit_button.pack(pady=10, padx=10, side="bottom")
+
+
+def submit_user_input(window, threshold_entry, gen_lim_entry,s1_entry,s2_entry,s3_entry,s4_entry):
+    global threshold, gen_lim, s1,s2,s3,s4, matrix
+
+    # Get user input values
+    threshold = float(threshold_entry.get())
+    gen_lim = int(gen_lim_entry.get())
+    s1 = float(s1_entry.get())
+    s2 = float(s2_entry.get())
+    s3 = float(s3_entry.get())
+    s4 = float(s4_entry.get())
+
+    # Create the matrix using the user input
+    matrix = create_matrix()
+
+    # Destroy the user input window
+    window.destroy()
+
+# This function will draw the buttons on the screen.
+def draw_buttons():
     # choose the first player:
     start_button = tk.Button(root, text="Start", command=choose_first_wrapper)
     # start_button.pack()
     start_button.place(x=500, y=1000)
-
     # pass the rumor:
     next_gen_button = tk.Button(root, text="Next Generation", command=pass_rumor_wrapper)
     # next_gen_button.pack()
     next_gen_button.place(x=500, y=0)
 
 
-Game_flow()
+# Global variables for the Game flow
+matrix = create_matrix()
+
+
+def welcome_screen():
+    # Create a Tkinter window
+    welcome = tk.Toplevel(root)
+    welcome.geometry('800x600')  # Set window size
+
+    # Create a label widget for the title
+    title_label = tk.Label(welcome, text="Welcome to the Game of Life : Spreading Rumor edition", font=("Arial", 20))
+    title_label.pack(pady=20)  # Add some padding
+
+    # Create a label widget for the configurations
+    config_label = tk.Label(welcome, text="The configurations are:", font=("Arial", 14))
+    config_label.pack(pady=10)
+
+    config_label = tk.Label(welcome, text="Population density: {}".format(threshold), font=("Arial", 14))
+    config_label.pack(pady=10)
+
+    config_label = tk.Label(welcome, text="Generation limitation of spreading rumor: {}".format(gen_lim), font=("Arial", 14))
+    config_label.pack(pady=10)
+
+    # Add a button widget to start the game
+    start_button = tk.Button(welcome, text="Start Game",  command=lambda: start_game(welcome))
+    start_button.pack(pady=20)
+
+    input_button = tk.Button(welcome, text="Change configuration", command=get_user_input)
+    input_button.pack(pady=20)
+
+    welcome.wait_window()  # Wait for the welcome window to be destroyed
+
+def start_game(welcome):
+    global matrix
+    global game_counter
+    global canvas
+    # hide the welcome window
+    welcome.destroy()
+    canvas = tk.Canvas(root, width=cols * 10, height=rows * 10)
+    canvas.pack()
+    # Draw the buttons on the screen
+    draw_buttons()
+    # Print the initial matrix before the rumor.
+    draw_all_cells(matrix)
+
+# init the Graphics window
+# Create a Tkinter window
+root = tk.Tk()
+root.state('normal')
+root.iconify()  # Hide the root window
+canvas = None
+welcome_screen()
+
+# Make the canvas window pop up
+root.update()
+root.deiconify()
+root.lift()
+
 # Start the Tkinter event loop
 root.mainloop()
