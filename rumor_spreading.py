@@ -9,11 +9,13 @@ gen_lim = 5
 threshold = 0.5
 rows = 100
 cols = 100
+knows_the_rumor=1
+total_population=0
 
 
-def create_matrix():
-    global threshold
+def create_matrix(threshold=0.5):
     matrix = []
+    global total_population
     # Possible value for dobutness level.
     doubt_value = [1, 2, 3, 4]
     # define the namedtuple
@@ -24,15 +26,17 @@ def create_matrix():
     for i in range(rows):
         row = []
         for j in range(cols):
-            if random.uniform(0, 1) <= threshold:
+            if random.uniform(0, 1) >= threshold:
                 # If larger than threshold than the cell is filled human.
                 # The doubtness level is assigned.
                 row.append(Cell(random.choice(doubt_value), False, 0, 0, 0, 0, 0))
+                total_population +=1
             else:
                 row.append(Cell(0, False, 0, 0, 0, 0, 0))
         matrix.append(row)
 
     return matrix
+
 
 
 def choose_first():
@@ -43,7 +47,9 @@ def choose_first():
         column = random.randint(0, 99)
         if matrix[row][column] is not None:
             is_staffed = True
-            return row, column
+            matrix[row][column] = matrix[row][column]._replace(received_rumor=True)
+            matrix[row][column] = matrix[row][column]._replace(received_gen=game_counter)
+            return
 
 
 def believe_rumor(doubt_level):
@@ -194,11 +200,7 @@ def choose_first_wrapper():
     global matrix
     global game_counter
     canvas.delete('all')
-    row, column = choose_first()
-    matrix[row][column] = matrix[row][column]._replace(received_rumor=True)
-    matrix[row][column] = matrix[row][column]._replace(received_gen=game_counter)
-    print(row, column)
-    print(matrix[row][column].received_rumor)
+    choose_first()
     root.update()
     draw_all_cells(matrix, True)
     root.update()
