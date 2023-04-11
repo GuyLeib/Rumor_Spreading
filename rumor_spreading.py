@@ -13,13 +13,12 @@ s3 = 0.25
 s4 = 0.25
 rows = 100
 cols = 100
-total_population=0
-knows_the_rumor=1
+matrix=[]
 
 def create_matrix():
     global threshold, s1, s2, s3, s4
-    global total_population
-    matrix = []
+    global matrix
+    matrix=[]
     # Possible value for dobutness level.
     doubt_value = [1, 2, 3, 4]
     # define the namedtuple
@@ -31,7 +30,6 @@ def create_matrix():
         row = []
         for j in range(cols):
             if random.uniform(0, 1) <= threshold:
-                total_population+=1
                 # If larger than threshold than the cell is filled human.
                 # The doubtness level is assigned according to the specified percentages
                 rand = random.uniform(0, 1)
@@ -64,7 +62,6 @@ def choose_first():
 
 
 def believe_rumor(doubt_level):
-    print(random.uniform(0, 1))
     if doubt_level == 1:
         return True
     elif doubt_level == 2:
@@ -91,16 +88,12 @@ def define_temp_doubt(doubt):
 def get_rumor(cell):
     global game_counter
     # check if cell is not none:
-    print("line 77")
     if cell.doubt == 0:
         return cell
     if not cell.received_rumor:
-        global knows_the_rumor
-        knows_the_rumor+=1
         # Update the cell
         cell = cell._replace(received_gen=game_counter)
         cell = cell._replace(received_rumor=True)
-        print('got the rumor')
         cell = cell._replace(num_neighbors=cell.num_neighbors + 1)
     else:
         if cell.received_gen != game_counter:
@@ -116,7 +109,6 @@ def get_rumor(cell):
 def spread_to_neighbors(row, column):
     global matrix
     global game_counter
-    print("line 101")
     # spread the rumor to all neighbors while making sure they exist:
     if row > 0:
         matrix[row - 1][column] = get_rumor(matrix[row - 1][column])
@@ -144,18 +136,15 @@ def pass_rumor():
         for j in range(100):
             if matrix[i][j].doubt != 0:
                 if matrix[i][j].received_rumor:
-                    print('recived rumor true found')
                     # Condition for the first one to pass the rumor.
                     if matrix[i][j].received_gen == game_counter and game_counter == 0:
                         believe = believe_rumor(matrix[i][j].doubt)
                         if believe:
-                            print('believed')
                             spread_to_neighbors(i, j)
                             # update L counter:
                             matrix[i][j] = matrix[i][j]._replace(counter=gen_lim)
                         # if the cell already spread the rumor + the generation is game_counter-1 + l_counter ==0:
                     if matrix[i][j].received_gen == game_counter - 1 and matrix[i][j].counter == 0:
-                        print('condition')
                         # check if the cell has a temp doubt:
                         if matrix[i][j].temp_doubt != 0:
                             believe = believe_rumor(matrix[i][j].temp_doubt)
@@ -163,7 +152,6 @@ def pass_rumor():
                             believe = believe_rumor(matrix[i][j].doubt)
                         # check if the cell believes the rumor, if so- spread to neighbors:
                         if believe:
-                            print('believe')
                             # update L counter:
                             matrix[i][j] = matrix[i][j]._replace(counter=gen_lim)
                             # update the passing generation:
@@ -226,7 +214,6 @@ def pass_rumor_wrapper():
     pass_rumor()
     game_counter += 1
     root.update()
-    print('line 198')
     draw_all_cells(matrix, True)
     get_stats()
     root.update()
@@ -397,6 +384,8 @@ def start_game(welcome):
     draw_all_cells(matrix)
 
 
+# init the Graphics window
+# Create a Tkinter window
 # init the Graphics window
 # Create a Tkinter window
 root = tk.Tk()
