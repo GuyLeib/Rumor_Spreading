@@ -7,6 +7,7 @@ def percentage(nums_list, total):
 def average(nums_list):
     avg = sum(nums_list) / len(nums_list)
     return avg
+
 def get_num_of_knowers():
     global matrix
     # How many new believers for each iteration
@@ -48,7 +49,7 @@ def run_simulatations(l_value=5, p=0.5, S1=0.25,S2=0.25,S3=0.25,S4=0.25):
     for i in range(30):
         pepole_per_generation[i] = []
 
-    for simulation in range(10):
+    for simulation in range(100):
         global matrix
         matrix = create_matrix()
         total = get_total_pop()
@@ -76,7 +77,7 @@ def run_simulatations(l_value=5, p=0.5, S1=0.25,S2=0.25,S3=0.25,S4=0.25):
 def create_data():
     gen_limit_list=[0,5,10,15,20,25,30]
     threshold_list=[0.1,0.2,0.3,0.4,0.5,0.6,0.7,0.8,0.9,1.0]
-    s_tuples_list=[(0.25, 0.25,0.25,0.25), (0.6,0.1,0.1,0.1),(0.1,0.6,0.1,0.1),(0.1,0.1,0.6,0.1),(0.1,0.1,0.1,0.6)]
+    s_tuples_list=[(0.25, 0.25,0.25,0.25), (0.7,0.1,0.1,0.1),(0.1,0.7,0.1,0.1),(0.1,0.1,0.7,0.1),(0.1,0.1,0.1,0.7)]
     with open('data.csv', mode='w', newline='') as file:
         writer = csv.writer(file)
         # create tables for different gen limit:
@@ -111,6 +112,25 @@ def create_data():
             for row in people_per_generation:
                 writer.writerow(row)
             writer.writerow([])
+        # create table for opposite s1 concetration and population denstiy.
+        people_per_generation = run_simulatations(p=0.9,S1=0.1,S2=0.1,S3=0.1,S4=0.7)
+        title = ['s proportion:' + str(0.1), ' threshold: ' +str(0.9),' ']
+        table_headers = ['iteration', 'number_of_people']
+        writer.writerow(title)
+        writer.writerow(table_headers)
+        for row in people_per_generation:
+            writer.writerow(row)
+        writer.writerow([])
+        # create table for opposite s1 concetration and population denstiy.
+        people_per_generation = run_simulatations(p=0.1,S1=0.7,S2=0.1,S3=0.1,S4=0.1)
+        title = ['s proportion:' + str("S1=0.7,S2=0.1,S3=0.1,S4=0.1"), ' threshold: ' +str(0.1),' ']
+        table_headers = ['iteration', 'number_of_people']
+        writer.writerow(title)
+        writer.writerow(table_headers)
+        for row in people_per_generation:
+            writer.writerow(row)
+        writer.writerow([])
+
 
 
 create_data()
