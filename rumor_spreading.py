@@ -7,36 +7,47 @@ from tkinter import simpledialog
 game_counter = 0
 gen_lim = 5
 threshold = 0.5
+s1 = 0.25
+s2 = 0.25
+s3 = 0.25
+s4 = 0.25
 rows = 100
 cols = 100
-knows_the_rumor=1
 total_population=0
+knows_the_rumor=1
 
-
-def create_matrix(threshold=0.5):
-    matrix = []
+def create_matrix():
+    global threshold, s1, s2, s3, s4
     global total_population
+    matrix = []
     # Possible value for dobutness level.
     doubt_value = [1, 2, 3, 4]
     # define the namedtuple
     Cell = namedtuple('Cell', ['doubt', 'received_rumor', 'received_gen', 'passed_gen', 'num_neighbors', 'temp_doubt',
                                'counter'])
 
-    # Creating a matrix filled with 0.
+    # Creating a matrix filled with cells
     for i in range(rows):
         row = []
         for j in range(cols):
-            if random.uniform(0, 1) >= threshold:
+            if random.uniform(0, 1) <= threshold:
+                total_population+=1
                 # If larger than threshold than the cell is filled human.
-                # The doubtness level is assigned.
-                row.append(Cell(random.choice(doubt_value), False, 0, 0, 0, 0, 0))
-                total_population +=1
+                # The doubtness level is assigned according to the specified percentages
+                rand = random.uniform(0, 1)
+                if rand <= s1:
+                    row.append(Cell(1, False, 0, 0, 0, 0, 0))
+                elif rand <= s1 + s2:
+                    row.append(Cell(2, False, 0, 0, 0, 0, 0))
+                elif rand <= s1 + s2 + s3:
+                    row.append(Cell(3, False, 0, 0, 0, 0, 0))
+                else:
+                    row.append(Cell(4, False, 0, 0, 0, 0, 0))
             else:
                 row.append(Cell(0, False, 0, 0, 0, 0, 0))
         matrix.append(row)
 
     return matrix
-
 
 
 def choose_first():
@@ -84,6 +95,8 @@ def get_rumor(cell):
     if cell.doubt == 0:
         return cell
     if not cell.received_rumor:
+        global knows_the_rumor
+        knows_the_rumor+=1
         # Update the cell
         cell = cell._replace(received_gen=game_counter)
         cell = cell._replace(received_rumor=True)
@@ -218,6 +231,7 @@ def pass_rumor_wrapper():
     get_stats()
     root.update()
 
+
 # Prints the number of people knows the rumor in each iteration
 def get_stats():
     global game_counter
@@ -301,12 +315,12 @@ def get_user_input():
     # Create a button to submit the user input
     submit_button = tk.Button(user_input_window, text="Submit",
                               command=lambda: submit_user_input(user_input_window, threshold_entry, gen_lim_entry,
-                                                                s1_entry,s2_entry,s3_entry,s4_entry))
+                                                                s1_entry, s2_entry, s3_entry, s4_entry))
     submit_button.pack(pady=10, padx=10, side="bottom")
 
 
-def submit_user_input(window, threshold_entry, gen_lim_entry,s1_entry,s2_entry,s3_entry,s4_entry):
-    global threshold, gen_lim, s1,s2,s3,s4, matrix
+def submit_user_input(window, threshold_entry, gen_lim_entry, s1_entry, s2_entry, s3_entry, s4_entry):
+    global threshold, gen_lim, s1, s2, s3, s4, matrix
 
     # Get user input values
     threshold = float(threshold_entry.get())
@@ -321,6 +335,7 @@ def submit_user_input(window, threshold_entry, gen_lim_entry,s1_entry,s2_entry,s
 
     # Destroy the user input window
     window.destroy()
+
 
 # This function will draw the buttons on the screen.
 def draw_buttons():
@@ -354,17 +369,19 @@ def welcome_screen():
     config_label = tk.Label(welcome, text="Population density: {}".format(threshold), font=("Arial", 14))
     config_label.pack(pady=10)
 
-    config_label = tk.Label(welcome, text="Generation limitation of spreading rumor: {}".format(gen_lim), font=("Arial", 14))
+    config_label = tk.Label(welcome, text="Generation limitation of spreading rumor: {}".format(gen_lim),
+                            font=("Arial", 14))
     config_label.pack(pady=10)
 
     # Add a button widget to start the game
-    start_button = tk.Button(welcome, text="Start Game",  command=lambda: start_game(welcome))
+    start_button = tk.Button(welcome, text="Start Game", command=lambda: start_game(welcome))
     start_button.pack(pady=20)
 
     input_button = tk.Button(welcome, text="Change configuration", command=get_user_input)
     input_button.pack(pady=20)
 
     welcome.wait_window()  # Wait for the welcome window to be destroyed
+
 
 def start_game(welcome):
     global matrix
@@ -378,6 +395,7 @@ def start_game(welcome):
     draw_buttons()
     # Print the initial matrix before the rumor.
     draw_all_cells(matrix)
+
 
 # init the Graphics window
 # Create a Tkinter window

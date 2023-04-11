@@ -1,4 +1,4 @@
-from rumor_spreading import choose_first, pass_rumor,get_stats,create_matrix, knows_the_rumor,total_population
+from rumor_spreading import choose_first, pass_rumor,get_stats,create_matrix, knows_the_rumor, total_population, game_counter,gen_lim,threshold,s1, s2, s3 ,s4, rows, cols
 
 def percentage(nums_list, total):
     avg=sum(nums_list)/len(nums_list)
@@ -10,6 +10,10 @@ def create_plots():
     global total_population
     global knows_the_rumor
     global matrix
+    # list of P with 0.1 jumps
+    # differnt options for s1-s4
+    # list of L with jump of 5
+
     # create a dictionary to hold the percentage of people for each iteration:
     pepole_per_generation = {}
     for i in range(30):
@@ -17,7 +21,7 @@ def create_plots():
         print(pepole_per_generation)
     for simulation in range(10):
         knows_the_rumor = 1
-        total_population=0
+        total_population = 0
         matrix = create_matrix()
         choose_first()
         for generation in range(30):
