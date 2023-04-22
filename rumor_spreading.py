@@ -138,7 +138,7 @@ def pass_rumor():
                 if matrix[i][j].received_rumor:
                     # Condition for the first one to pass the rumor.
                     if matrix[i][j].received_gen == game_counter and game_counter == 0:
-                        believe = believe_rumor(matrix[i][j].doubt)
+                        believe = True
                         if believe:
                             spread_to_neighbors(i, j)
                             # update L counter:
