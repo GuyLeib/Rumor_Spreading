@@ -149,17 +149,56 @@ def spilt_to_df():
         for t in range(0,791,33):
             title =(str(rows[t][0]),t+2,t+31)
             titles.append(title)
-        print(titles)
     for i in range(len(titles)):
         new_list=rows[titles[i][1]:titles[i][2]+1][:]
-        print (new_list)
         df = pd.DataFrame(new_list, columns=['iteration', 'percent'])
-        print(df)
-        df=df.iloc[:, 1:]
         key = titles[i][0]
+        df['iteration'] = pd.to_numeric(df['iteration'])
+        df['percent'] = pd.to_numeric(df['percent'])
         dict_df[key]=df
-        for i in dict_df.values():
-            print ("df: ",i)
+        print(df['iteration'])
+    return dict_df
+
+def plot_data():
+    dict_df = spilt_to_df()
+
+    # Create a figure and axis object
+    fig, ax = plt.subplots()
+    ax.set_title('generation limit')
+
+    # Generate some random data
+    for key, value in dict_df.items():
+        if key.startswith('gen'):
+            x = value['iteration']
+            y = value['percent']
+            # Plot the data as a continuous line
+            ax.plot(x, y, label=key)
+
+    # Set the labels and title
+    ax.set_xlabel('iteration')
+    ax.set_ylabel('percent of spread')
+
+    # Add a legend
+    plt.legend()
+
+    # Show the plot
+    plt.show()
+    plt.savefig("gen_lim")
+
+    # # Create a figure and axis object
+    # fig, ax = plt.subplots()
+    #
+    # # Plot each DataFrame in the dictionary
+    # for key,value in dict_df.items():
+    #     sns.kdeplot(data=dict_df[key], x='iteration', y='percent', label=key,kind="kde")
+    # ax.legend()
+    # # Set the title and axis labels
+    # ax.set_title('Density plot of data')
+    # ax.set_xlabel('Column 1')
+    # ax.set_ylabel('Column 2')
+    #
+    # # Display the plot
+    # plt.show()
 
 #create_data()
-spilt_to_df()
+plot_data()
