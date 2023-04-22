@@ -1,5 +1,8 @@
 from rumor_spreading import matrix, choose_first, pass_rumor,get_stats,create_matrix, game_counter,gen_lim,threshold,s1, s2, s3 ,s4, rows, cols
 import csv
+import seaborn as sns
+import matplotlib.pyplot as plt
+import pandas as pd
 
 def percentage(nums_list, total):
     avg=sum(nums_list)/len(nums_list)
@@ -137,6 +140,26 @@ def create_data():
             writer.writerow(row)
         writer.writerow([])
 
+def spilt_to_df():
+    titles = []
+    dict_df = {}
+    with open('data.csv', 'r') as file:
+        reader = csv.reader(file)
+        rows = list(reader)
+        for t in range(0,791,33):
+            title =(str(rows[t][0]),t+2,t+31)
+            titles.append(title)
+        print(titles)
+    for i in range(len(titles)):
+        new_list=rows[titles[i][1]:titles[i][2]+1][:]
+        print (new_list)
+        df = pd.DataFrame(new_list, columns=['iteration', 'percent'])
+        print(df)
+        df=df.iloc[:, 1:]
+        key = titles[i][0]
+        dict_df[key]=df
+        for i in dict_df.values():
+            print ("df: ",i)
 
-
-create_data()
+#create_data()
+spilt_to_df()
