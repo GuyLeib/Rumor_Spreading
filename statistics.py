@@ -1,5 +1,6 @@
 from rumor_spreading import matrix, choose_first, pass_rumor,get_stats,create_matrix, game_counter,gen_lim,threshold,s1, s2, s3 ,s4, rows, cols
 import csv
+
 def percentage(nums_list, total):
     avg=sum(nums_list)/len(nums_list)
     return (avg/total)*100
@@ -15,13 +16,15 @@ def get_num_of_knowers():
     for i in range(100):
         for j in range(100):
             if matrix[i][j].received_rumor:
-                counter += 1
+                counter = counter+1
+            if matrix[i][j].received_gen > 0 and not matrix[i][j].received_rumor:
+                print("k")
     return counter
 
 
 def get_total_pop():
     global matrix
-    counter= 0
+    counter = 0
     for i in range(100):
         for j in range(100):
             if matrix[i][j].doubt!=0:
@@ -48,16 +51,18 @@ def run_simulatations(l_value=5, p=0.5, S1=0.25,S2=0.25,S3=0.25,S4=0.25):
     pepole_per_generation = {}
     for i in range(30):
         pepole_per_generation[i] = []
-
     for simulation in range(100):
         global matrix
         matrix = create_matrix()
-        total = get_total_pop()
         print("total pop: ", get_total_pop())
         choose_first()
         print(simulation)
+        knows=0
         for generation in range(30):
             pass_rumor()
+            if knows>get_num_of_knowers():
+                print("Hara")
+                print(matrix)
             knows = get_num_of_knowers()
             pepole_per_generation[generation].append(knows)
             print("genration:", generation, "knows: ",knows)

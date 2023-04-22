@@ -50,12 +50,10 @@ def create_matrix():
 
 def choose_first():
     global matrix
-    is_staffed = False
-    while not is_staffed:
+    while True:
         row = random.randint(0, 99)
         column = random.randint(0, 99)
-        if matrix[row][column] is not None:
-            is_staffed = True
+        if matrix[row][column].doubt != 0:
             matrix[row][column] = matrix[row][column]._replace(received_rumor=True)
             matrix[row][column] = matrix[row][column]._replace(received_gen=game_counter)
             return
@@ -94,12 +92,13 @@ def get_rumor(cell):
         # Update the cell
         cell = cell._replace(received_gen=game_counter)
         cell = cell._replace(received_rumor=True)
-        cell = cell._replace(num_neighbors=cell.num_neighbors + 1)
+        cell = cell._replace(num_neighbors=1)
     else:
         if cell.received_gen != game_counter:
             cell = cell._replace(num_neighbors=1)
         else:
-            cell = cell._replace(num_neighbors=cell.num_neighbors + 1)
+            new_num_neigh=cell.num_neighbors + 1
+            cell = cell._replace(num_neighbors=new_num_neigh)
         if cell.num_neighbors >= 2 and cell.received_gen == game_counter:
             # update temp_doubt:
             cell = cell._replace(temp_doubt=define_temp_doubt(cell.doubt))
@@ -121,7 +120,7 @@ def spread_to_neighbors(row, column):
             if column > 0:
                 matrix[row + 1][column - 1] = get_rumor(matrix[row + 1][column - 1])
                 if column < 99:
-                    matrix[row + 1][column + 1] = get_rumor(matrix[row - 1][column + 1])
+                    matrix[row + 1][column + 1] = get_rumor(matrix[row + 1][column + 1])
     if column > 0:
         matrix[row][column - 1] = get_rumor(matrix[row][column - 1])
         if column < 99:
@@ -384,20 +383,21 @@ def start_game(welcome):
     draw_all_cells(matrix)
 
 
-# init the Graphics window
-# Create a Tkinter window
-# init the Graphics window
-# Create a Tkinter window
-root = tk.Tk()
-root.state('normal')
-root.iconify()  # Hide the root window
-canvas = None
-welcome_screen()
-
-# Make the canvas window pop up
-root.update()
-root.deiconify()
-root.lift()
-
-# Start the Tkinter event loop
-root.mainloop()
+# # init the Graphics window
+# # Create a Tkinter window
+# # init the Graphics window
+# # Create a Tkinter window
+# root = tk.Tk()
+# root.state('normal')
+# root.iconify()  # Hide the root window
+# canvas = None
+# welcome_screen()
+#
+# # Make the canvas window pop up
+# root.update()
+# root.deiconify()
+# root.lift()
+#
+# # Start the Tkinter event loop
+# root.mainloop()
+#
