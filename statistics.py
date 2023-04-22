@@ -64,6 +64,7 @@ def run_simulatations(l_value=5, p=0.5, S1=0.25,S2=0.25,S3=0.25,S4=0.25):
             percent= (knows/total)*100
             pepole_per_generation[generation].append(percent)
             print("genration:", generation, "percent: ",percent)
+
     avg_people_per_iteration=[]
     for gen, number_list in pepole_per_generation.items():
         avg_people_per_iteration.append([gen,average(number_list)])
