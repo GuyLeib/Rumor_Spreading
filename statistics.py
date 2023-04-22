@@ -58,6 +58,7 @@ def run_simulatations(l_value=5, p=0.5, S1=0.25,S2=0.25,S3=0.25,S4=0.25):
         choose_first()
         print(simulation)
         total=get_total_pop()
+
         for generation in range(30):
             pass_rumor()
             knows = get_num_of_knowers()
