@@ -383,21 +383,19 @@ def start_game(welcome):
     draw_all_cells(matrix)
 
 
-# # init the Graphics window
-# # Create a Tkinter window
-# # init the Graphics window
-# # Create a Tkinter window
-# root = tk.Tk()
-# root.state('normal')
-# root.iconify()  # Hide the root window
-# canvas = None
-# welcome_screen()
-#
-# # Make the canvas window pop up
-# root.update()
-# root.deiconify()
-# root.lift()
-#
-# # Start the Tkinter event loop
-# root.mainloop()
-#
+# init the Graphics window
+# Create a Tkinter window
+root = tk.Tk()
+root.state('normal')
+root.iconify()  # Hide the root window
+canvas = None
+welcome_screen()
+
+# Make the canvas window pop up
+root.update()
+root.deiconify()
+root.lift()
+
+# Start the Tkinter event loop
+root.mainloop()
+
