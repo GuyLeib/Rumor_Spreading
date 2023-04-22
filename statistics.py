@@ -54,13 +54,16 @@ def run_simulatations(l_value=5, p=0.5, S1=0.25,S2=0.25,S3=0.25,S4=0.25):
     for simulation in range(100):
         global matrix
         matrix = create_matrix()
-        knows = 0
+        print("total pop: ", get_total_pop())
+        choose_first()
+        print(simulation)
         total=get_total_pop()
         for generation in range(30):
             pass_rumor()
             knows = get_num_of_knowers()
-            percent=(knows/total)*100
+            percent= (knows/total)*100
             pepole_per_generation[generation].append(percent)
+            print("genration:", generation, "percent: ",percent)
     avg_people_per_iteration=[]
     for gen, number_list in pepole_per_generation.items():
         avg_people_per_iteration.append([gen,average(number_list)])
