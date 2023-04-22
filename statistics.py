@@ -143,30 +143,34 @@ def create_data():
 def spilt_to_df():
     titles = []
     dict_df = {}
+    # read the csv file and save it as a list:
     with open('data.csv', 'r') as file:
         reader = csv.reader(file)
         rows = list(reader)
+        # create a list of tuples containing title,start index and end index:
         for t in range(0,791,33):
-            title =(str(rows[t][0]),t+2,t+31)
+            title =(str(rows[t][0]), t+2, t+31)
             titles.append(title)
+    #
     for i in range(len(titles)):
-        new_list=rows[titles[i][1]:titles[i][2]+1][:]
-        df = pd.DataFrame(new_list, columns=['iteration', 'percent'])
-        key = titles[i][0]
+        # create list containing only the relevant rows for the df:
+        list_for_df=rows[titles[i][1]:titles[i][2]+1][:]
+        # create a df:
+        df = pd.DataFrame(list_for_df, columns=['iteration', 'percent'])
+        # convert values to numeric values:
         df['iteration'] = pd.to_numeric(df['iteration'])
         df['percent'] = pd.to_numeric(df['percent'])
+        key = titles[i][0]
+        # add the df to a dict if df's:
         dict_df[key]=df
-        print(df['iteration'])
     return dict_df
 
 def plot_data():
     dict_df = spilt_to_df()
-
+    # generate a plot for generation limit:
     # Create a figure and axis object
     fig, ax = plt.subplots()
     ax.set_title('generation limit')
-
-    # Generate some random data
     for key, value in dict_df.items():
         if key.startswith('gen'):
             x = value['iteration']
@@ -177,28 +181,28 @@ def plot_data():
     # Set the labels and title
     ax.set_xlabel('iteration')
     ax.set_ylabel('percent of spread')
-
     # Add a legend
     plt.legend()
-
     # Show the plot
     plt.show()
     plt.savefig("gen_lim")
-
-    # # Create a figure and axis object
-    # fig, ax = plt.subplots()
-    #
-    # # Plot each DataFrame in the dictionary
-    # for key,value in dict_df.items():
-    #     sns.kdeplot(data=dict_df[key], x='iteration', y='percent', label=key,kind="kde")
-    # ax.legend()
-    # # Set the title and axis labels
-    # ax.set_title('Density plot of data')
-    # ax.set_xlabel('Column 1')
-    # ax.set_ylabel('Column 2')
-    #
-    # # Display the plot
-    # plt.show()
+    # generate a plot for s proportion:
+    fig, ax = plt.subplots()
+    ax.set_title('s proportion')
+    for key, value in dict_df.items():
+        if key.startswith('s proportion:('):
+            x = value['iteration']
+            y = value['percent']
+            # Plot the data as a continuous line
+            ax.plot(x, y, label=key)
+    # Set the labels and title
+    ax.set_xlabel('iteration')
+    ax.set_ylabel('percent of spread')
+    # Add a legend
+    plt.legend()
+    # Show the plot
+    plt.show()
+    plt.savefig("s proportion")
 
 #create_data()
 plot_data()
