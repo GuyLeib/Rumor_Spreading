@@ -54,7 +54,7 @@ def run_simulatations(l_value=5, p=0.5, S1=0.25, S2=0.25, S3=0.25, S4=0.25):
     s4 = S4
     print(s1)
     pepole_per_generation = {}
-    for i in range(30):
+    for i in range(75):
         pepole_per_generation[i] = []
     for simulation in range(100):
         global matrix
@@ -64,7 +64,7 @@ def run_simulatations(l_value=5, p=0.5, S1=0.25, S2=0.25, S3=0.25, S4=0.25):
         print(simulation)
         total = get_total_pop()
 
-        for generation in range(30):
+        for generation in range(75):
             pass_rumor()
             knows = get_num_of_knowers()
             percent = (knows / total) * 100
@@ -124,7 +124,7 @@ def create_data():
                 writer.writerow(row)
             writer.writerow([])
         # create table for opposite s1 concetration and population denstiy.
-        people_per_generation = run_simulatations(p=0.9, S1=0.1, S2=0.1, S3=0.1, S4=0.7)
+        people_per_generation = run_simulatations(p=0.9, S1=0, S2=0, S3=0.1, S4=0.9)
         title = ['s proportion:' + str(0.1), ' threshold: ' + str(0.9), ' ']
         table_headers = ['iteration', 'number_of_people']
         writer.writerow(title)
@@ -133,7 +133,7 @@ def create_data():
             writer.writerow(row)
         writer.writerow([])
         # create table for opposite s1 concetration and population denstiy.
-        people_per_generation = run_simulatations(p=0.1, S1=0.7, S2=0.1, S3=0.1, S4=0.1)
+        people_per_generation = run_simulatations(p=0.1, S1=0.9, S2=0.1, S3=0, S4=0)
         title = ['s proportion:' + str("S1=0.7,S2=0.1,S3=0.1,S4=0.1"), ' threshold: ' + str(0.1), ' ']
         table_headers = ['iteration', 'number_of_people']
         writer.writerow(title)
@@ -151,8 +151,8 @@ def spilt_to_df():
         reader = csv.reader(file)
         rows = list(reader)
         # create a list of tuples containing title,start index and end index:
-        for t in range(0, 791, 33):
-            title = (str(rows[t][0]), t + 2, t + 31)
+        for t in range(0, 1872, 78):
+            title = (str(rows[t][0]), t + 2, t + 76)
             titles.append(title)
     #
     for i in range(len(titles)):
@@ -266,7 +266,6 @@ def plot_data():
 
             # Plot the data as a continuous line
             ax.bar(x, y, width=0.8, align='center', edgecolor='black')
-            ax.set_xticks(range(0, 30))
     # Set the labels and title
     ax.set_xlabel('Generation')
     ax.set_ylabel('Percent of new knowers')
@@ -278,5 +277,5 @@ def plot_data():
     plt.show()
 
 
-# create_data()
+#create_data()
 plot_data()
