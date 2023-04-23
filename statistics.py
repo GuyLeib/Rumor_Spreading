@@ -1,9 +1,167 @@
-from rumor_spreading import matrix, choose_first, pass_rumor, get_stats, create_matrix, game_counter, gen_lim, \
+from rumor_spreading import matrix, get_stats, game_counter, gen_lim, \
     threshold, s1, s2, s3, s4, rows, cols
 import csv
+import random
+from collections import namedtuple
 import seaborn as sns
 import matplotlib.pyplot as plt
 import pandas as pd
+
+def create_matrix():
+    global threshold, s1, s2, s3, s4
+    global matrix
+    matrix=[]
+    # Possible value for dobutness level.
+    doubt_value = [1, 2, 3, 4]
+    # define the namedtuple
+    Cell = namedtuple('Cell', ['doubt', 'received_rumor', 'received_gen', 'passed_gen', 'num_neighbors', 'temp_doubt',
+                               'counter'])
+
+    # Creating a matrix filled with cells
+    for i in range(rows):
+        row = []
+        for j in range(cols):
+            if random.uniform(0, 1) <= threshold:
+                # If larger than threshold than the cell is filled human.
+                # The doubtness level is assigned according to the specified percentages
+                rand = random.uniform(0, 1)
+                if rand <= s1:
+                    row.append(Cell(1, False, 0, 0, 0, 0, 0))
+                elif rand <= s1 + s2:
+                    row.append(Cell(2, False, 0, 0, 0, 0, 0))
+                elif rand <= s1 + s2 + s3:
+                    row.append(Cell(3, False, 0, 0, 0, 0, 0))
+                else:
+                    row.append(Cell(4, False, 0, 0, 0, 0, 0))
+            else:
+                row.append(Cell(0, False, 0, 0, 0, 0, 0))
+        matrix.append(row)
+
+    return matrix
+
+
+def choose_first():
+    global matrix
+    while True:
+        row = random.randint(0, 99)
+        column = random.randint(0, 99)
+        if matrix[row][column].doubt != 0:
+            matrix[row][column] = matrix[row][column]._replace(received_rumor=True)
+            matrix[row][column] = matrix[row][column]._replace(received_gen=game_counter)
+            return
+
+
+def believe_rumor(doubt_level):
+    if doubt_level == 1:
+        return True
+    elif doubt_level == 2:
+        if random.uniform(0, 1) >= (1 / 3):
+            return True
+        else:
+            return False
+    elif doubt_level == 3:
+        if random.uniform(0, 1) < (1 / 3):
+            return True
+        else:
+            return False
+    elif doubt_level == 4:
+        return False
+
+
+def define_temp_doubt(doubt):
+    if doubt != 1:
+        return doubt - 1
+    else:
+        return 1
+
+
+def get_rumor(cell):
+    global game_counter
+    # check if cell is not none:
+    if cell.doubt == 0:
+        return cell
+    if not cell.received_rumor:
+        # Update the cell
+        cell = cell._replace(received_gen=game_counter)
+        cell = cell._replace(received_rumor=True)
+        cell = cell._replace(num_neighbors=1)
+    else:
+        if cell.received_gen != game_counter:
+            cell = cell._replace(num_neighbors=1)
+        else:
+            new_num_neigh=cell.num_neighbors + 1
+            cell = cell._replace(num_neighbors=new_num_neigh)
+        if cell.num_neighbors >= 2 and cell.received_gen == game_counter:
+            # update temp_doubt:
+            cell = cell._replace(temp_doubt=define_temp_doubt(cell.doubt))
+    return cell
+
+
+def spread_to_neighbors(row, column):
+    global matrix
+    global game_counter
+    # spread the rumor to all neighbors while making sure they exist:
+    if row > 0:
+        matrix[row - 1][column] = get_rumor(matrix[row - 1][column])
+        if column > 0:
+            matrix[row - 1][column - 1] = get_rumor(matrix[row - 1][column - 1])
+            if column < 99:
+                matrix[row - 1][column + 1] = get_rumor(matrix[row - 1][column + 1])
+        if row < 99:
+            matrix[row + 1][column] = get_rumor(matrix[row + 1][column])
+            if column > 0:
+                matrix[row + 1][column - 1] = get_rumor(matrix[row + 1][column - 1])
+                if column < 99:
+                    matrix[row + 1][column + 1] = get_rumor(matrix[row + 1][column + 1])
+    if column > 0:
+        matrix[row][column - 1] = get_rumor(matrix[row][column - 1])
+        if column < 99:
+            matrix[row][column + 1] = get_rumor(matrix[row][column + 1])
+
+
+def pass_rumor():
+    global matrix
+    global gen_lim
+    global game_counter
+    # Loop over all the board:
+    for i in range(100):
+        for j in range(100):
+            if matrix[i][j].doubt != 0:
+                if matrix[i][j].received_rumor:
+                    # Condition for the first one to pass the rumor.
+                    if matrix[i][j].received_gen == game_counter and game_counter == 0:
+                        believe = True
+                        if believe:
+                            spread_to_neighbors(i, j)
+                            # update L counter:
+                            matrix[i][j] = matrix[i][j]._replace(counter=gen_lim)
+                        # if the cell already spread the rumor + the generation is game_counter-1 + l_counter ==0:
+                    if matrix[i][j].received_gen == game_counter - 1 and matrix[i][j].counter == 0:
+                        # check if the cell has a temp doubt:
+                        if matrix[i][j].temp_doubt != 0:
+                            believe = believe_rumor(matrix[i][j].temp_doubt)
+                        else:
+                            believe = believe_rumor(matrix[i][j].doubt)
+                        # check if the cell believes the rumor, if so- spread to neighbors:
+                        if believe:
+                            # update L counter:
+                            matrix[i][j] = matrix[i][j]._replace(counter=gen_lim)
+                            # update the passing generation:
+                            matrix[i][j] = matrix[i][j]._replace(passed_gen=game_counter)
+                            # Spread the rumor to neighbors
+                            spread_to_neighbors(i, j)
+
+
+                if matrix[i][j].counter != 0:
+                    # decrement the L counter:
+                    matrix[i][j] = matrix[i][j]._replace(counter=matrix[i][j].counter - 1)
+                # clear temp doubt if needed:
+                if matrix[i][j].temp_doubt != 0 and matrix[i][j].received_gen <= game_counter - 1:
+                    matrix[i - 1][j - 1] = matrix[i - 1][j - 1]._replace(temp_doubt=0)
+
+    game_counter += 1
+
+
 
 
 def percentage(nums_list, total):
@@ -39,13 +197,14 @@ def get_total_pop():
     return counter
 
 
-def run_simulatations(l_value=5, p=0.5, S1=0.25, S2=0.25, S3=0.25, S4=0.25):
+def run_simulatations(l_value=5, p=0.8, S1=0.25, S2=0.25, S3=0.25, S4=0.25):
     global gen_lim
     global threshold
     global s1
     global s2
     global s3
     global s4
+    global game_counter
     threshold = p
     gen_lim = l_value
     s1 = S1
@@ -56,7 +215,7 @@ def run_simulatations(l_value=5, p=0.5, S1=0.25, S2=0.25, S3=0.25, S4=0.25):
     pepole_per_generation = {}
     for i in range(75):
         pepole_per_generation[i] = []
-    for simulation in range(100):
+    for simulation in range(10):
         global matrix
         matrix = create_matrix()
         print("total pop: ", get_total_pop())
@@ -91,6 +250,37 @@ def create_data():
                      (0.1, 0.1, 0.1, 0.7)]
     with open('data.csv', mode='w', newline='') as file:
         writer = csv.writer(file)
+
+        # # create table for opposite s1 concetration and population denstiy.
+        # people_per_generation = run_simulatations(p=0.9, S1=0.9, S2=0.1, S3=0, S4=0)
+        # title = ['s proportion:' + str("p=0.9, S1=0.9, S2=0.1, S3=0, S4=0"), ' threshold: ' + str(0.1), ' ']
+        # table_headers = ['iteration', 'number_of_people']
+        # writer.writerow(title)
+        # writer.writerow(table_headers)
+        # for row in people_per_generation:
+        #     writer.writerow(row)
+        # writer.writerow([])
+        #
+        # # create table for opposite s1 concetration and population denstiy.
+        # people_per_generation = run_simulatations(p=0.9, S1=0.9, S2=0.1, S3=0, S4=0)
+        # title = ['s proportion:' + str("p=0.9, S1=0.9, S2=0.1, S3=0, S4=0"), ' threshold: ' + str(0.1), ' ']
+        # table_headers = ['iteration', 'number_of_people']
+        # writer.writerow(title)
+        # writer.writerow(table_headers)
+        # for row in people_per_generation:
+        #     writer.writerow(row)
+        # writer.writerow([])
+        #
+        # # create table for opposite s1 concetration and population denstiy.
+        # people_per_generation = run_simulatations(p=0.1, S1=0, S2=0, S3=0.9, S4=0.1)
+        # title = ['s proportion:' + str("p=0.1, S1=0, S2=0, S3=0.9, S4=0.1"), ' threshold: ' + str(0.1), ' ']
+        # table_headers = ['iteration', 'number_of_people']
+        # writer.writerow(title)
+        # writer.writerow(table_headers)
+        # for row in people_per_generation:
+        #     writer.writerow(row)
+        # writer.writerow([])
+
         # create tables for different gen limit:
         for gen_limit in gen_limit_list:
             people_per_generation = run_simulatations(l_value=gen_limit)
@@ -171,6 +361,25 @@ def spilt_to_df():
 
 def plot_data():
     dict_df = spilt_to_df()
+    ###test
+    fig, ax = plt.subplots()
+    ax.set_title('generation limit')
+    for key, value in dict_df.items():
+        if key.startswith('s proportion:'):
+            x = value['iteration']
+            y = value['percent']
+            # Plot the data as a continuous line
+            ax.plot(x, y, label=key)
+
+    # Set the labels and title
+    ax.set_xlabel('iteration')
+    ax.set_ylabel('percent of spread')
+    # Add a legend
+    plt.legend()
+    # Saves and Show the plot
+    plt.savefig("gen_lim.png")
+    plt.show()
+
     # generate a plot for generation limit:
     # Create a figure and axis object
     fig, ax = plt.subplots()
@@ -187,7 +396,7 @@ def plot_data():
     ax.set_ylabel('percent of spread')
     # Add a legend
     plt.legend()
-    #Saves and Show the plot
+    # Saves and Show the plot
     plt.savefig("gen_lim.png")
     plt.show()
 
