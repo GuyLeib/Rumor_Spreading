@@ -130,6 +130,7 @@ def spread_to_neighbors(row, column):
 def pass_rumor():
     global matrix
     global gen_lim
+    global game_counter
     # Loop over all the board:
     for i in range(100):
         for j in range(100):
@@ -158,6 +159,7 @@ def pass_rumor():
                             # Spread the rumor to neighbors
                             spread_to_neighbors(i, j)
 
+
                 if matrix[i][j].counter != 0:
                     # decrement the L counter:
                     matrix[i][j] = matrix[i][j]._replace(counter=matrix[i][j].counter - 1)
@@ -165,6 +167,7 @@ def pass_rumor():
                 if matrix[i][j].temp_doubt != 0 and matrix[i][j].received_gen <= game_counter - 1:
                     matrix[i - 1][j - 1] = matrix[i - 1][j - 1]._replace(temp_doubt=0)
 
+    game_counter += 1
 
 # Define a function to draw a rectangle for each cell
 def draw_cell(matrix, i, j, flag=False):
@@ -211,7 +214,7 @@ def pass_rumor_wrapper():
     global matrix
     canvas.delete('all')
     pass_rumor()
-    game_counter += 1
+    #game_counter += 1
     root.update()
     draw_all_cells(matrix, True)
     get_stats()
@@ -383,19 +386,21 @@ def start_game(welcome):
     draw_all_cells(matrix)
 
 
-# init the Graphics window
-# Create a Tkinter window
-root = tk.Tk()
-root.state('normal')
-root.iconify()  # Hide the root window
-canvas = None
-welcome_screen()
-
-# Make the canvas window pop up
-root.update()
-root.deiconify()
-root.lift()
-
-# Start the Tkinter event loop
-root.mainloop()
-
+# # init the Graphics window
+# # Create a Tkinter window
+# # init the Graphics window
+# # Create a Tkinter window
+# root = tk.Tk()
+# root.state('normal')
+# root.iconify()  # Hide the root window
+# canvas = None
+# welcome_screen()
+#
+# # Make the canvas window pop up
+# root.update()
+# root.deiconify()
+# root.lift()
+#
+# # Start the Tkinter event loop
+# root.mainloop()
+#
