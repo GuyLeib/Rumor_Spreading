@@ -197,7 +197,7 @@ def get_total_pop():
     return counter
 
 
-def run_simulatations(l_value=5, p=0.8, S1=0.25, S2=0.25, S3=0.25, S4=0.25):
+def run_simulatations(l_value=5, p=0.8, S1=0.6, S2=0.2, S3=0.1, S4=0.1):
     global gen_lim
     global threshold
     global s1
@@ -314,7 +314,7 @@ def create_data():
                 writer.writerow(row)
             writer.writerow([])
         # create table for opposite s1 concetration and population denstiy.
-        people_per_generation = run_simulatations(p=0.9, S1=0, S2=0, S3=0.1, S4=0.9)
+        people_per_generation = run_simulatations(p=0.7, S1=0, S2=0, S3=0.2, S4=0.8)
         title = ['s proportion:' + str(0.1), ' threshold: ' + str(0.9), ' ']
         table_headers = ['iteration', 'number_of_people']
         writer.writerow(title)
@@ -323,7 +323,7 @@ def create_data():
             writer.writerow(row)
         writer.writerow([])
         # create table for opposite s1 concetration and population denstiy.
-        people_per_generation = run_simulatations(p=0.1, S1=0.9, S2=0.1, S3=0, S4=0)
+        people_per_generation = run_simulatations(p=0.3, S1=0.8, S2=0.2, S3=0, S4=0)
         title = ['s proportion:' + str("S1=0.7,S2=0.1,S3=0.1,S4=0.1"), ' threshold: ' + str(0.1), ' ']
         table_headers = ['iteration', 'number_of_people']
         writer.writerow(title)
@@ -369,11 +369,17 @@ def plot_data():
             x = value['iteration']
             y = value['percent']
             # Plot the data as a continuous line
+
             ax.plot(x, y, label=key)
 
     # Set the labels and title
     ax.set_xlabel('iteration')
     ax.set_ylabel('percent of spread')
+    x_min = min(x)
+    x_max = max(x)
+
+    # Set the x-limits to fit the values
+    ax.set_xlim(x_min, x_max)
     # Add a legend
     plt.legend()
     # Saves and Show the plot
@@ -383,7 +389,7 @@ def plot_data():
     # generate a plot for generation limit:
     # Create a figure and axis object
     fig, ax = plt.subplots()
-    ax.set_title('generation limit')
+    ax.set_title('Rumor spreading rate -Generation Limit')
     for key, value in dict_df.items():
         if key.startswith('gen'):
             x = value['iteration']
@@ -392,10 +398,15 @@ def plot_data():
             ax.plot(x, y, label=key)
 
     # Set the labels and title
-    ax.set_xlabel('iteration')
-    ax.set_ylabel('percent of spread')
+    ax.set_xlabel('Generation')
+    ax.set_ylabel('Percent Of Spread')
+    x_min = min(x)
+    x_max = max(x)
+
+    # Set the x-limits to fit the values
+    ax.set_xlim(x_min, x_max)
     # Add a legend
-    plt.legend()
+    plt.legend(["0", "5", "10", "15", "20", "25", "30"])
     # Saves and Show the plot
     plt.savefig("gen_lim.png")
     plt.show()
@@ -403,7 +414,7 @@ def plot_data():
     plt.clf()
     # generate a plot for s proportion:
     fig, ax = plt.subplots()
-    ax.set_title('s proportion')
+    ax.set_title('Rumor spreading rate -S Proportion')
     for key, value in dict_df.items():
         if key.startswith('s proportion:('):
             x = value['iteration']
@@ -411,10 +422,10 @@ def plot_data():
             # Plot the data as a continuous line
             ax.plot(x, y, label=key)
     # Set the labels and title
-    ax.set_xlabel('iteration')
-    ax.set_ylabel('percent of spread')
+    ax.set_xlabel('Generation')
+    ax.set_ylabel('Percent Of Spread')
     # Add a legend
-    plt.legend()
+    plt.legend(["s1=0.25, s2=0.25, s3=0.25, s4=0.25", "s1=0.7, s2=0.1, s3=0.1, s4=0.1", "s1=0.1, s2=0.7, s3=0.1, s4=0.1",  "s1=0.1, s2=0.1, s3=0.7, s4=0.1","s1=0.1, s2=0.1, s3=0.1, s4=0.7"])
     # Show the plot
     plt.savefig("s proportion.png")
     plt.show()
@@ -430,9 +441,10 @@ def plot_data():
             # Plot the data as a continuous line
             ax.plot(x, y, label=key)
     # Set the labels and title
-    ax.set_xlabel('iteration')
-    ax.set_ylabel('percent of spread')
+    ax.set_xlabel('Generation')
+    ax.set_ylabel('Percent Of Spread')
     ax.set_title("Rumor spreading rate - Population Density ")
+
     # Add a legend
     plt.legend(["0.1", "0.2", "0.3", "0.4", "0.5", "0.6", "0.7", "0.8", "0.9", "1.0"])
     # Show the plot
@@ -449,9 +461,10 @@ def plot_data():
             y = value['percent']
             # Plot the data as a continuous line
             ax.plot(x, y, label=key)
+
     # Set the labels and title
-    ax.set_xlabel('iteration')
-    ax.set_ylabel('percent of spread')
+    ax.set_xlabel('Generation')
+    ax.set_ylabel('Percent Of Spread')
     ax.set_title("Rumor spreading rate - Population Density vs Doubt Level ")
     # Add a legend
     plt.legend(["Low Density High Doubt", "High Density Low Doubt"])
@@ -474,7 +487,14 @@ def plot_data():
             y = changed_y
 
             # Plot the data as a continuous line
-            ax.bar(x, y, width=0.8, align='center', edgecolor='black')
+            ax.bar(x, y, width=0.8, align='center', color='black', linewidth=0)
+            # Get the minimum and maximum x-values
+            x_min = min(x)
+            x_max = max(x)
+
+            # Set the x-limits to fit the values
+            ax.set_xlim(x_min , x_max)
+
     # Set the labels and title
     ax.set_xlabel('Generation')
     ax.set_ylabel('Percent of new knowers')
@@ -486,5 +506,4 @@ def plot_data():
     plt.show()
 
 
-#create_data()
 plot_data()
