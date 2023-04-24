@@ -359,6 +359,86 @@ def spilt_to_df():
     return dict_df
 
 
+def slow_create_matrix():
+    global threshold, s1, s2, s3, s4
+    threshold=0.7
+    s1=0.6
+    s2=0.2
+    s3=0.1
+    s4=0.1
+    global matrix
+    matrix = []
+    # define the namedtuple
+    Cell = namedtuple('Cell', ['doubt', 'received_rumor', 'received_gen', 'passed_gen', 'num_neighbors', 'temp_doubt',
+                               'counter'])
+    total_pop=0
+    # Creating a matrix filled with cells
+    for i in range(rows):
+        row = []
+        for j in range(cols):
+            if random.uniform(0, 1) <= threshold:
+                # If larger than threshold than the cell is filled human.
+                # The doubtness level is assigned according to the specified percentages
+                row.append(Cell(5, False, 0, 0, 0, 0, 0))
+                total_pop += 1
+            else:
+                row.append(Cell(0, False, 0, 0, 0, 0, 0))
+        matrix.append(row)
+
+    s1_count=int(s1*total_pop)
+    s2_count=int(s2*total_pop)
+    s3_count = int(s3 * total_pop)
+    s4_count = int(s4 * total_pop)
+    for i in range(rows):
+        for j in range(cols):
+            if matrix[i][j].doubt == 5:
+                if s1_count > 0:
+                    matrix[i][j] = matrix[i][j]._replace(doubt=1)
+                    s1_count -= 1
+                    continue
+                elif s4_count > 0:
+                    matrix[i][j] = matrix[i][j]._replace(doubt=4)
+                    s4_count -= 1
+                    continue
+                elif s3_count > 0:
+                    matrix[i][j] = matrix[i][j]._replace(doubt=3)
+                    s3_count -= 1
+                    continue
+                elif s2_count > 0:
+                    matrix[i][j] = matrix[i][j]._replace(doubt=2)
+                    s2_count -= 1
+                    continue
+                else:
+                    matrix[i][j] = matrix[i][j]._replace(doubt=0)
+    print (matrix)
+    return matrix
+
+
+def run_and_plot_slow_strategy():
+    people_per_gen = run_simulatations(5, 0.7, 0.6, 0.2, 0.1, 0.1)
+    x_values = [row[0] for row in people_per_gen]
+    y_values = [row[1] for row in people_per_gen]
+
+    # Plot the two lists using plt.plot()
+    plt.plot(x_values, y_values)
+
+    # set the x-axis label
+    plt.xlabel('Generation')
+
+    # set the y-axis label
+    plt.ylabel('Percent Of Spread')
+
+    # Add plot title
+    plt.title('Slow Strategy')
+    plt.ylim(0, 80)
+    plt.xlim(0, 75)
+
+
+    # Show the plot
+    plt.show()
+    plt.savefig("slow_stg")
+
+
 def plot_data():
     dict_df = spilt_to_df()
     ###test
@@ -504,6 +584,7 @@ def plot_data():
     # Show the plot
     plt.savefig("generation_spread.png")
     plt.show()
+    plt.clf()
 
 
-plot_data()
+run_and_plot_slow_strategy()
