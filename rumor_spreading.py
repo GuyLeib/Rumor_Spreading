@@ -71,13 +71,16 @@ def max_neighbors():
                 row.append(Cell(0, False, 0, 0, 0, 0, 0))
 
         fast_matrix.append(row)
-
+    s4_list=[]
     for i in range(rows):
         neighbor_row = []
         for j in range(cols):
             if fast_matrix[i][j].doubt == -1:
                 neighbors = get_neighbors(fast_matrix, i, j)
                 neighbors_to_add = [(ni, nj) for ni, nj in neighbors if (fast_matrix[ni][nj].doubt != 0)]
+                if not neighbors_to_add:
+                    # assigning s4 to people without neighbors
+                    s4_list.append((i,j))
                 neighbor_row.append(neighbors_to_add)
             else:
                 neighbor_row.append([])
@@ -85,7 +88,6 @@ def max_neighbors():
 
     num_humans = sum(cell.doubt == -1 for row in fast_matrix for cell in row)
     num_of_missing_humans = sum(cell.doubt == 0 for row in fast_matrix for cell in row)
-    print(num_of_missing_humans)
 
     num_s1 = math.ceil(s1 * num_humans)
     num_s2 = math.ceil(s2 * num_humans)
@@ -98,6 +100,26 @@ def max_neighbors():
     sorted_neighbors = sorted(neighbor_list, key=lambda x: x[2], reverse=True)
     # Extract only the cell indices from the sorted list
     highest_neighbors = [(i, j) for i, j, _ in sorted_neighbors]
+
+# First assign the s4 to the human without any neighbors.
+    for i, j in s4_list:
+        if num_s4>0:
+            fast_matrix[i][j] = fast_matrix[i][j]._replace(doubt=4)
+            num_s4 -=1
+            continue
+        if num_s3>0:
+            fast_matrix[i][j] = fast_matrix[i][j]._replace(doubt=3)
+            num_s3 -=1
+            continue
+        if num_s2>0:
+            fast_matrix[i][j] = fast_matrix[i][j]._replace(doubt=2)
+            num_s2 -=1
+            continue
+        if num_s1>0:
+            fast_matrix[i][j] = fast_matrix[i][j]._replace(doubt=1)
+            num_s1 -=1
+            continue
+
 
     for i, j in highest_neighbors:
         if num_s1 > 0:
@@ -116,7 +138,6 @@ def max_neighbors():
             fast_matrix[i][j] = fast_matrix[i][j]._replace(doubt=4)
             num_s4 -= 1
             continue
-    num_of_missing_humans = sum(cell.doubt == -1 for row in fast_matrix for cell in row)
     return fast_matrix
 
 
