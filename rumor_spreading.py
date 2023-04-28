@@ -344,12 +344,33 @@ def choose_first_wrapper():
 def pass_rumor_wrapper():
     global game_counter
     global matrix
+    global stats_label
     canvas.delete('all')
     pass_rumor()
     game_counter += 1
     root.update()
     draw_all_cells(matrix, True)
-    get_stats()
+    gen, counter, per = get_stats()
+    per = "{:.1f}".format(per)
+    stats_label.config(
+        text="Generation {}: {} people knows the rumor - {} percent of the population".format(gen, counter, per),font="Tahoma 10 bold",bg='black',fg='white',relief='ridge')
+    root.update()
+
+
+def pass_30_gens():
+    global game_counter
+    global matrix
+    global stats_label
+    canvas.delete('all')
+    for i in range(0, 30):
+        pass_rumor()
+        game_counter += 1
+    root.update()
+    draw_all_cells(matrix, True)
+    gen, counter, per = get_stats()
+    per = "{:.1f}".format(per)
+    stats_label.config(
+        text="Generation {}: {} people knows the rumor - {} percent of the population".format(gen, counter, per),font="Tahoma 10 bold",bg='black',fg='white',relief='ridge')
     root.update()
 
 
@@ -357,13 +378,16 @@ def pass_rumor_wrapper():
 def get_stats():
     global game_counter
     global matrix
+    num_humans = sum(cell.doubt != 0 for row in matrix for cell in row)
     # How many new believers for each iteration
     counter = 0
     for i in range(100):
         for j in range(100):
             if matrix[i][j].received_rumor:
                 counter += 1
-    print("Iteration {} : the rumor spread to {} people".format(game_counter, counter))
+    # calc the percent of the population that know the rumor
+    percent = (counter / num_humans) * 100
+    return game_counter, counter, percent
 
 
 def validate_float(input):
@@ -487,6 +511,9 @@ def draw_buttons():
     next_gen_button.pack(side='right')
     # next_gen_button.place(x=500, y=0)
 
+    next_30_gens_button = tk.Button(root, text="30 Generations forward", command=pass_30_gens)
+    next_30_gens_button.pack(side='bottom')
+
 
 # create a reference to the welcome screen labels.
 welcome = None
@@ -546,14 +573,22 @@ def welcome_screen():
     welcome.wait_window()  # Wait for the welcome window to be destroyed
 
 
+stats_label = None
+
+
+# This function will close the welcome screen and show the grid.
 def start_game(welcome):
     global matrix
     global game_counter
     global canvas
+    global stats_label
     # hide the welcome window
     welcome.destroy()
     canvas = tk.Canvas(root, width=cols * 6, height=rows * 6)
     canvas.pack()
+    # init a stats label
+    stats_label = tk.Label(root, text="")
+    stats_label.pack()
     # Draw the buttons on the screen
     draw_buttons()
     # Print the initial matrix before the rumor.
