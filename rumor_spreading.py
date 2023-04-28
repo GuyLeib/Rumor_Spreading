@@ -1,6 +1,7 @@
 import random
 from collections import namedtuple
 import tkinter as tk
+import math
 from tkinter import simpledialog
 
 # Global Variables: Number of rows, columns and game counter.
@@ -14,8 +15,10 @@ s4 = 0.25
 rows = 100
 cols = 100
 matrix = []
+strategy = 'normal'
 
 
+# This function create a matrix for the normal setting of the game
 def create_matrix():
     global threshold, s1, s2, s3, s4
     global matrix
@@ -46,6 +49,135 @@ def create_matrix():
                 row.append(Cell(0, False, 0, 0, 0, 0, 0))
         matrix.append(row)
 
+    return matrix
+
+
+# This function will create a matrix fot the fast strategy of the game
+def max_neighbors():
+    global threshold, s1, s2, s3, s4, gen_lim
+    fast_matrix = []
+    neighbor_matrix = []
+    # define the namedtuple
+    Cell = namedtuple('Cell', ['doubt', 'received_rumor', 'received_gen', 'passed_gen', 'num_neighbors', 'temp_doubt',
+                               'counter'])
+
+    # Creating a matrix filled with cells
+    for i in range(rows):
+        row = []
+        for j in range(cols):
+            if random.uniform(0, 1) <= threshold:
+                row.append(Cell(-1, False, 0, 0, 0, 0, 0))
+            else:
+                row.append(Cell(0, False, 0, 0, 0, 0, 0))
+
+        fast_matrix.append(row)
+
+    for i in range(rows):
+        neighbor_row = []
+        for j in range(cols):
+            if fast_matrix[i][j].doubt == -1:
+                neighbors = get_neighbors(fast_matrix, i, j)
+                neighbors_to_add = [(ni, nj) for ni, nj in neighbors if (fast_matrix[ni][nj].doubt != 0)]
+                neighbor_row.append(neighbors_to_add)
+            else:
+                neighbor_row.append([])
+        neighbor_matrix.append(neighbor_row)
+
+    num_humans = sum(cell.doubt == -1 for row in fast_matrix for cell in row)
+    num_of_missing_humans = sum(cell.doubt == 0 for row in fast_matrix for cell in row)
+    print(num_of_missing_humans)
+
+    num_s1 = math.ceil(s1 * num_humans)
+    num_s2 = math.ceil(s2 * num_humans)
+    num_s3 = math.ceil(s3 * num_humans)
+    num_s4 = num_humans - num_s1 - num_s2 - num_s3
+
+    # Flatten the neighbor matrix into a list of tuples
+    neighbor_list = [(i, j, len(neighbor_matrix[i][j])) for i in range(rows) for j in range(cols)]
+    # Sort the list based on the number of neighbors in descending order
+    sorted_neighbors = sorted(neighbor_list, key=lambda x: x[2], reverse=True)
+    # Extract only the cell indices from the sorted list
+    highest_neighbors = [(i, j) for i, j, _ in sorted_neighbors]
+
+    for i, j in highest_neighbors:
+        if num_s1 > 0:
+            fast_matrix[i][j] = fast_matrix[i][j]._replace(doubt=1)
+            num_s1 -= 1
+            continue
+        if num_s2 > 0:
+            fast_matrix[i][j] = fast_matrix[i][j]._replace(doubt=2)
+            num_s2 -= 1
+            continue
+        if num_s3 > 0:
+            fast_matrix[i][j] = fast_matrix[i][j]._replace(doubt=3)
+            num_s3 -= 1
+            continue
+        if num_s4 > 0:
+            fast_matrix[i][j] = fast_matrix[i][j]._replace(doubt=4)
+            num_s4 -= 1
+            continue
+    num_of_missing_humans = sum(cell.doubt == -1 for row in fast_matrix for cell in row)
+    return fast_matrix
+
+
+# An helper function to get the neighbors of a cell in the matrix.
+def get_neighbors(matrix, i, j):
+    global rows, cols
+    neighbors = []
+    for di, dj in [(1, 0), (0, 1), (-1, 0), (0, -1), (1, 1), (-1, 1), (1, -1), (-1, -1)]:
+        ni, nj = i + di, j + dj
+        if 0 <= ni < rows and 0 <= nj < cols:
+            neighbors.append((ni, nj))
+    return neighbors
+
+
+# This function will create a matrix for the slow strategy
+def slow_create_matrix():
+    global threshold, s1, s2, s3, s4, gen_lim
+    global matrix
+    matrix = []
+    # define the namedtuple
+    Cell = namedtuple('Cell', ['doubt', 'received_rumor', 'received_gen', 'passed_gen', 'num_neighbors', 'temp_doubt',
+                               'counter'])
+    total_pop = 0
+    # Creating a matrix filled with cells
+    for i in range(rows):
+        row = []
+        for j in range(cols):
+            if random.uniform(0, 1) <= threshold:
+                # If larger than threshold than the cell is filled human.
+                # The doubtness level is assigned according to the specified percentages
+                row.append(Cell(5, False, 0, 0, 0, 0, 0))
+                total_pop += 1
+            else:
+                row.append(Cell(0, False, 0, 0, 0, 0, 0))
+        matrix.append(row)
+
+    s1_count = int(s1 * total_pop)
+    s2_count = int(s2 * total_pop)
+    s3_count = int(s3 * total_pop)
+    s4_count = int(s4 * total_pop)
+    for i in range(rows):
+        for j in range(cols):
+            if matrix[i][j].doubt == 5:
+                if s1_count > 0:
+                    matrix[i][j] = matrix[i][j]._replace(doubt=1)
+                    s1_count -= 1
+                    continue
+                elif s4_count > 0:
+                    matrix[i][j] = matrix[i][j]._replace(doubt=4)
+                    s4_count -= 1
+                    continue
+                elif s3_count > 0:
+                    matrix[i][j] = matrix[i][j]._replace(doubt=3)
+                    s3_count -= 1
+                    continue
+                elif s2_count > 0:
+                    matrix[i][j] = matrix[i][j]._replace(doubt=2)
+                    s2_count -= 1
+                    continue
+                else:
+                    matrix[i][j] = matrix[i][j]._replace(doubt=0)
     return matrix
 
 
@@ -140,6 +272,7 @@ def pass_rumor():
                     # Condition for the first one to pass the rumor.
                     if matrix[i][j].received_gen == game_counter and game_counter == 0:
                         believe = True
+                        game_counter += 1
                         if believe:
                             spread_to_neighbors(i, j)
                             # update L counter:
@@ -166,8 +299,6 @@ def pass_rumor():
                 # clear temp doubt if needed:
                 if matrix[i][j].temp_doubt != 0 and matrix[i][j].received_gen <= game_counter - 1:
                     matrix[i - 1][j - 1] = matrix[i - 1][j - 1]._replace(temp_doubt=0)
-
-    game_counter += 1
 
 
 # Define a function to draw a rectangle for each cell
@@ -215,7 +346,7 @@ def pass_rumor_wrapper():
     global matrix
     canvas.delete('all')
     pass_rumor()
-    # game_counter += 1
+    game_counter += 1
     root.update()
     draw_all_cells(matrix, True)
     get_stats()
@@ -246,26 +377,17 @@ def validate_float(input):
         return False
 
 
-# def validate_sum():
-#     try:
-#         value1 = float(number_entry1.get())
-#         value2 = float(number_entry2.get())
-#         value3 = float(number_entry3.get())
-#         value4 = float(number_entry4.get())
-#         if abs(value1 + value2 + value3 + value4 - 1) < 0.0001:
-#             return True
-#         else:
-#             return False
-#     except ValueError:
-#         return False
+# Global variables for the Game flow
+matrix = create_matrix()
+
 
 # This function will get the desired configuration from the user.
 def get_user_input():
-    global threshold, gen_lim, s1, s2, s3, s4, matrix
+    global threshold, gen_lim, s1, s2, s3, s4, matrix, strategy
 
     # Create a new Toplevel window
     user_input_window = tk.Toplevel()
-    user_input_window.geometry('400x550')  # Set window size
+    user_input_window.geometry('400x600')  # Set window size
 
     # Create a label widget for the title
     title_label = tk.Label(user_input_window, text="Enter new configuration", font=("Arial", 18))
@@ -302,15 +424,21 @@ def get_user_input():
     s4_entry = tk.Entry(user_input_window)
     s4_entry.pack(pady=5)
 
+    strategy_label = tk.Label(user_input_window, text="Enter the game strategy: normal, fast or slow")
+    strategy_label.pack(pady=10)
+    strategy_entry = tk.Entry(user_input_window)
+    strategy_entry.pack(pady=5)
+
     # Create a button to submit the user input
     submit_button = tk.Button(user_input_window, text="Submit",
                               command=lambda: submit_user_input(user_input_window, threshold_entry, gen_lim_entry,
-                                                                s1_entry, s2_entry, s3_entry, s4_entry))
+                                                                s1_entry, s2_entry, s3_entry, s4_entry, strategy_entry))
     submit_button.pack(pady=10, padx=10, side="bottom")
 
 
-def submit_user_input(window, threshold_entry, gen_lim_entry, s1_entry, s2_entry, s3_entry, s4_entry):
-    global threshold, gen_lim, s1, s2, s3, s4, matrix
+def submit_user_input(window, threshold_entry, gen_lim_entry, s1_entry, s2_entry, s3_entry, s4_entry, strategy_entry):
+    global threshold, gen_lim, s1, s2, s3, s4, matrix, strategy
+    global welcome, config_label, lim_label, pop_label, s1_label, s2_label, s3_label, s4_label, strategy_label
 
     # Get user input values
     threshold = float(threshold_entry.get())
@@ -319,9 +447,30 @@ def submit_user_input(window, threshold_entry, gen_lim_entry, s1_entry, s2_entry
     s2 = float(s2_entry.get())
     s3 = float(s3_entry.get())
     s4 = float(s4_entry.get())
+    strategy = strategy_entry.get()
 
-    # Create the matrix using the user input
-    matrix = create_matrix()
+    # Change the labels on the welcome screen
+    pop_label.config(text="Population density: {}".format(threshold))
+
+    lim_label.config(text="Generation limitation of spreading rumor: {}".format(gen_lim))
+
+    s1_label.config(text="S1 proportion: {}".format(s1))
+
+    s2_label.config(text="S2 proportion: {}".format(s2))
+
+    s3_label.config(text="S3 proportion: {}".format(s3))
+
+    s4_label.config(text="S4 proportion: {}".format(s4))
+
+    strategy_label.config(text="Game strategy: {}".format(strategy))
+
+    # Create the new matrix
+    if strategy == 'normal':
+        matrix = create_matrix()
+    if strategy == 'fast':
+        matrix = max_neighbors()
+    if strategy == 'slow':
+        matrix = slow_create_matrix()
 
     # Destroy the user input window
     window.destroy()
@@ -332,18 +481,27 @@ def draw_buttons():
     # choose the first player:
     start_button = tk.Button(root, text="Start", command=choose_first_wrapper)
     start_button.pack(side='left')
-    #start_button.place(x=500, y=1000)
+    # start_button.place(x=500, y=1000)
     # pass the rumor:
     next_gen_button = tk.Button(root, text="Next Generation", command=pass_rumor_wrapper)
     next_gen_button.pack(side='right')
-    #next_gen_button.place(x=500, y=0)
+    # next_gen_button.place(x=500, y=0)
 
 
-# Global variables for the Game flow
-matrix = create_matrix()
+# create a reference to the welcome screen labels.
+welcome = None
+config_label = None
+pop_label = None
+lim_label = None
+s1_label = None
+s2_label = None
+s3_label = None
+s4_label = None
+strategy_label = None
 
 
 def welcome_screen():
+    global welcome, config_label, lim_label, pop_label, s1_label, s2_label, s3_label, s4_label, strategy_label
     # Create a Tkinter window
     welcome = tk.Toplevel(root)
     welcome.geometry('800x600')  # Set window size
@@ -356,12 +514,27 @@ def welcome_screen():
     config_label = tk.Label(welcome, text="The configurations are:", font=("Arial", 14))
     config_label.pack(pady=10)
 
-    config_label = tk.Label(welcome, text="Population density: {}".format(threshold), font=("Arial", 14))
-    config_label.pack(pady=10)
+    pop_label = tk.Label(welcome, text="Population density: {}".format(threshold), font=("Arial", 14))
+    pop_label.pack(pady=10)
 
-    config_label = tk.Label(welcome, text="Generation limitation of spreading rumor: {}".format(gen_lim),
-                            font=("Arial", 14))
-    config_label.pack(pady=10)
+    lim_label = tk.Label(welcome, text="Generation limitation of spreading rumor: {}".format(gen_lim),
+                         font=("Arial", 14))
+    lim_label.pack(pady=10)
+
+    s1_label = tk.Label(welcome, text="S1 proportion: {}".format(s1), font=("Arial", 14))
+    s1_label.pack(pady=5)
+
+    s2_label = tk.Label(welcome, text="S2 proportion: {}".format(s2), font=("Arial", 14))
+    s2_label.pack(pady=5)
+
+    s3_label = tk.Label(welcome, text="S3 proportion: {}".format(s3), font=("Arial", 14))
+    s3_label.pack(pady=5)
+
+    s4_label = tk.Label(welcome, text="S4 proportion: {}".format(s4), font=("Arial", 14))
+    s4_label.pack(pady=5)
+
+    strategy_label = tk.Label(welcome, text="Game strategy: {}".format(strategy), font=("Arial", 14))
+    strategy_label.pack(pady=10)
 
     # Add a button widget to start the game
     start_button = tk.Button(welcome, text="Start Game", command=lambda: start_game(welcome))
@@ -387,18 +560,18 @@ def start_game(welcome):
     draw_all_cells(matrix)
 
 
-# # init the Graphics window
-# # Create a Tkinter window
-# root = tk.Tk()
-# root.state('normal')
-# root.iconify()  # Hide the root window
-# canvas = None
-# welcome_screen()
-#
-# # Make the canvas window pop up
-# root.update()
-# root.deiconify()
-# root.lift()
-#
-# # Start the Tkinter event loop
-# root.mainloop()
+# init the Graphics window
+# Create a Tkinter window
+root = tk.Tk()
+root.state('normal')
+root.iconify()  # Hide the root window
+canvas = None
+welcome_screen()
+
+# Make the canvas window pop up
+root.update()
+root.deiconify()
+root.lift()
+
+# Start the Tkinter event loop
+root.mainloop()
