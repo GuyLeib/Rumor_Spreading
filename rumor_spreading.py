@@ -13,13 +13,14 @@ s3 = 0.25
 s4 = 0.25
 rows = 100
 cols = 100
-matrix=[]
+matrix = []
+
 
 def create_matrix():
     global threshold, s1, s2, s3, s4
     global matrix
-    matrix=[]
-    # Possible value for dobutness level.
+    matrix = []
+    # Possible value for doubtness level.
     doubt_value = [1, 2, 3, 4]
     # define the namedtuple
     Cell = namedtuple('Cell', ['doubt', 'received_rumor', 'received_gen', 'passed_gen', 'num_neighbors', 'temp_doubt',
@@ -97,7 +98,7 @@ def get_rumor(cell):
         if cell.received_gen != game_counter:
             cell = cell._replace(num_neighbors=1)
         else:
-            new_num_neigh=cell.num_neighbors + 1
+            new_num_neigh = cell.num_neighbors + 1
             cell = cell._replace(num_neighbors=new_num_neigh)
         if cell.num_neighbors >= 2 and cell.received_gen == game_counter:
             # update temp_doubt:
@@ -159,7 +160,6 @@ def pass_rumor():
                             # Spread the rumor to neighbors
                             spread_to_neighbors(i, j)
 
-
                 if matrix[i][j].counter != 0:
                     # decrement the L counter:
                     matrix[i][j] = matrix[i][j]._replace(counter=matrix[i][j].counter - 1)
@@ -168,6 +168,7 @@ def pass_rumor():
                     matrix[i - 1][j - 1] = matrix[i - 1][j - 1]._replace(temp_doubt=0)
 
     game_counter += 1
+
 
 # Define a function to draw a rectangle for each cell
 def draw_cell(matrix, i, j, flag=False):
@@ -184,10 +185,10 @@ def draw_cell(matrix, i, j, flag=False):
         color = '#006400'
     if cell.doubt == 0:
         color = 'white'
-    x1 = j * 10
-    y1 = i * 10
-    x2 = x1 + 10
-    y2 = y1 + 10
+    x1 = j * 6
+    y1 = i * 6
+    x2 = x1 + 6
+    y2 = y1 + 6
     canvas.create_rectangle(x1, y1, x2, y2, fill=color, outline="")
 
 
@@ -214,7 +215,7 @@ def pass_rumor_wrapper():
     global matrix
     canvas.delete('all')
     pass_rumor()
-    #game_counter += 1
+    # game_counter += 1
     root.update()
     draw_all_cells(matrix, True)
     get_stats()
@@ -264,7 +265,7 @@ def get_user_input():
 
     # Create a new Toplevel window
     user_input_window = tk.Toplevel()
-    user_input_window.geometry('400x300')  # Set window size
+    user_input_window.geometry('400x550')  # Set window size
 
     # Create a label widget for the title
     title_label = tk.Label(user_input_window, text="Enter new configuration", font=("Arial", 18))
@@ -330,12 +331,12 @@ def submit_user_input(window, threshold_entry, gen_lim_entry, s1_entry, s2_entry
 def draw_buttons():
     # choose the first player:
     start_button = tk.Button(root, text="Start", command=choose_first_wrapper)
-    # start_button.pack()
-    start_button.place(x=500, y=1000)
+    start_button.pack(side='left')
+    #start_button.place(x=500, y=1000)
     # pass the rumor:
     next_gen_button = tk.Button(root, text="Next Generation", command=pass_rumor_wrapper)
-    # next_gen_button.pack()
-    next_gen_button.place(x=500, y=0)
+    next_gen_button.pack(side='right')
+    #next_gen_button.place(x=500, y=0)
 
 
 # Global variables for the Game flow
@@ -378,7 +379,7 @@ def start_game(welcome):
     global canvas
     # hide the welcome window
     welcome.destroy()
-    canvas = tk.Canvas(root, width=cols * 10, height=rows * 10)
+    canvas = tk.Canvas(root, width=cols * 6, height=rows * 6)
     canvas.pack()
     # Draw the buttons on the screen
     draw_buttons()
@@ -386,8 +387,6 @@ def start_game(welcome):
     draw_all_cells(matrix)
 
 
-# # init the Graphics window
-# # Create a Tkinter window
 # # init the Graphics window
 # # Create a Tkinter window
 # root = tk.Tk()
@@ -403,4 +402,3 @@ def start_game(welcome):
 #
 # # Start the Tkinter event loop
 # root.mainloop()
-#
