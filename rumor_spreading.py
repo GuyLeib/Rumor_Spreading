@@ -139,7 +139,7 @@ def slow_create_matrix():
     # define the namedtuple
     Cell = namedtuple('Cell', ['doubt', 'received_rumor', 'received_gen', 'passed_gen', 'num_neighbors', 'temp_doubt',
                                'counter'])
-    total_pop = 0
+    total_pop=0
     # Creating a matrix filled with cells
     for i in range(rows):
         row = []
@@ -153,31 +153,100 @@ def slow_create_matrix():
                 row.append(Cell(0, False, 0, 0, 0, 0, 0))
         matrix.append(row)
 
-    s1_count = int(s1 * total_pop)
-    s2_count = int(s2 * total_pop)
+    s1_count = int(s1*total_pop)
+    s2_count = int(s2*total_pop)
     s3_count = int(s3 * total_pop)
     s4_count = int(s4 * total_pop)
+    s1_prop=int(s1*10)
+    s2_prop=int(s2*10)
+    s3_prop = int(s3 * 10)
+    s4_prop = int(s4 * 10)
+
     for i in range(rows):
         for j in range(cols):
             if matrix[i][j].doubt == 5:
-                if s1_count > 0:
-                    matrix[i][j] = matrix[i][j]._replace(doubt=1)
-                    s1_count -= 1
-                    continue
-                elif s4_count > 0:
-                    matrix[i][j] = matrix[i][j]._replace(doubt=4)
-                    s4_count -= 1
-                    continue
-                elif s3_count > 0:
-                    matrix[i][j] = matrix[i][j]._replace(doubt=3)
-                    s3_count -= 1
-                    continue
-                elif s2_count > 0:
-                    matrix[i][j] = matrix[i][j]._replace(doubt=2)
-                    s2_count -= 1
-                    continue
-                else:
-                    matrix[i][j] = matrix[i][j]._replace(doubt=0)
+                if i == 0 or i % 10 < s1_prop:
+                    if s1_count > 0:
+                        matrix[i][j] = matrix[i][j]._replace(doubt=1)
+                        s1_count -= 1
+                        continue
+                    elif s4_count > 0:
+                        matrix[i][j] = matrix[i][j]._replace(doubt=4)
+                        s4_count -= 1
+                        continue
+                    elif s2_count > 0:
+                        matrix[i][j] = matrix[i][j]._replace(doubt=2)
+                        s2_count -= 1
+                        continue
+                    elif s3_count > 0:
+                        matrix[i][j] = matrix[i][j]._replace(doubt=3)
+                        s3_count -= 1
+                        continue
+                    else:
+                        matrix[i][j] = matrix[i][j]._replace(doubt=0)
+                        continue
+                elif i % 10 < s4_prop+s1_prop:
+                    if s4_count > 0:
+                        matrix[i][j] = matrix[i][j]._replace(doubt=4)
+                        s4_count -= 1
+                        continue
+                    elif s3_count > 0:
+                        matrix[i][j] = matrix[i][j]._replace(doubt=3)
+                        s3_count -= 1
+                        continue
+                    elif s2_count > 0:
+                        matrix[i][j] = matrix[i][j]._replace(doubt=2)
+                        s2_count -= 1
+                        continue
+                    elif s1_count > 0:
+                        matrix[i][j] = matrix[i][j]._replace(doubt=1)
+                        s1_count -= 1
+                        continue
+                    else:
+                        matrix[i][j] = matrix[i][j]._replace(doubt=0)
+                        continue
+                elif i % 10 < s4_prop+s1_prop+s2_prop:
+                    if s2_count > 0:
+                        matrix[i][j] = matrix[i][j]._replace(doubt=2)
+                        s2_count -= 1
+                        continue
+                    elif s4_count > 0:
+                        matrix[i][j] = matrix[i][j]._replace(doubt=4)
+                        s4_count -= 1
+                        continue
+                    elif s3_count > 0:
+                        matrix[i][j] = matrix[i][j]._replace(doubt=3)
+                        s3_count -= 1
+                        continue
+                    elif s1_count > 0:
+                        matrix[i][j] = matrix[i][j]._replace(doubt=1)
+                        s1_count -= 1
+                        continue
+                    else:
+                        matrix[i][j] = matrix[i][j]._replace(doubt=0)
+                        continue
+                elif i % 10 < s4_prop+s1_prop+s2_prop+s3_prop:
+                    if s3_count > 0:
+                        matrix[i][j] = matrix[i][j]._replace(doubt=3)
+                        s3_count -= 1
+                        continue
+                    elif s4_count > 0:
+                        matrix[i][j] = matrix[i][j]._replace(doubt=4)
+                        s4_count -= 1
+                        continue
+                    elif s2_count > 0:
+                        matrix[i][j] = matrix[i][j]._replace(doubt=2)
+                        s2_count -= 1
+                        continue
+
+                    elif s1_count > 0:
+                        matrix[i][j] = matrix[i][j]._replace(doubt=1)
+                        s1_count -= 1
+                        continue
+                    else:
+                        matrix[i][j] = matrix[i][j]._replace(doubt=0)
+                        continue
+
     return matrix
 
 
@@ -272,11 +341,12 @@ def pass_rumor():
                     # Condition for the first one to pass the rumor.
                     if matrix[i][j].received_gen == game_counter and game_counter == 0:
                         believe = True
-                        game_counter += 1
                         if believe:
                             spread_to_neighbors(i, j)
                             # update L counter:
                             matrix[i][j] = matrix[i][j]._replace(counter=gen_lim)
+                            game_counter += 1
+                            return
                         # if the cell already spread the rumor + the generation is game_counter-1 + l_counter ==0:
                     if matrix[i][j].received_gen == game_counter - 1 and matrix[i][j].counter == 0:
                         # check if the cell has a temp doubt:

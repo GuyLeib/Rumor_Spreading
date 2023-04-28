@@ -136,6 +136,8 @@ def pass_rumor():
                             spread_to_neighbors(i, j)
                             # update L counter:
                             matrix[i][j] = matrix[i][j]._replace(counter=gen_lim)
+                            game_counter += 1
+                            return
                         # if the cell already spread the rumor + the generation is game_counter-1 + l_counter ==0:
                     if matrix[i][j].received_gen == game_counter - 1 and matrix[i][j].counter == 0:
                         # check if the cell has a temp doubt:
@@ -216,15 +218,14 @@ def run_simulatations(matrix_type="reg", l_value=5, p=0.8, S1=0.6, S2=0.2, S3=0.
     for simulation in range(1):
         global matrix
         if matrix_type=="slow":
-            print("add the function here")
-            #matrix = slow_create_matrix()
+            matrix = slow_create_matrix()
+            print (simulation)
         elif matrix_type=="fast":
             matrix=create_matrix_s1()
         else:
             matrix=create_matrix()
         print("total pop: ", get_total_pop())
         choose_first()
-        print(simulation)
         total = get_total_pop()
 
         for generation in range(75):
@@ -327,32 +328,8 @@ def spilt_to_df():
 
 
 def plot_data():
+
     dict_df = spilt_to_df()
-    ###test
-    fig, ax = plt.subplots()
-    ax.set_title('generation limit')
-    for key, value in dict_df.items():
-        if key.startswith('s proportion:'):
-            x = value['iteration']
-            y = value['percent']
-            # Plot the data as a continuous line
-
-            ax.plot(x, y, label=key)
-
-    # Set the labels and title
-    ax.set_xlabel('iteration')
-    ax.set_ylabel('percent of spread')
-    x_min = min(x)
-    x_max = max(x)
-
-    # Set the x-limits to fit the values
-    ax.set_xlim(x_min, x_max)
-    # Add a legend
-    plt.legend()
-    # Saves and Show the plot
-    plt.savefig("gen_lim.png")
-    plt.show()
-
     # generate a plot for generation limit:
     # Create a figure and axis object
     fig, ax = plt.subplots()
@@ -436,7 +413,7 @@ def plot_data():
     ax.set_ylabel('Percent Of Spread')
     ax.set_title("Rumor spreading rate - Population Density vs Doubt Level ")
     # Add a legend
-    plt.legend(["Low Density High Doubt", "High Density Low Doubt"])
+    plt.legend(["Low Density Low Doubt", "High Density High Doubt"])
     # Show the plot
     plt.savefig("density_vs_doubt.png")
     plt.show()
@@ -473,6 +450,126 @@ def plot_data():
     # Show the plot
     plt.savefig("generation_spread.png")
     plt.show()
+
+def slow_create_matrix():
+    global threshold, s1, s2, s3, s4, gen_lim
+    global matrix
+    matrix = []
+    # define the namedtuple
+    Cell = namedtuple('Cell', ['doubt', 'received_rumor', 'received_gen', 'passed_gen', 'num_neighbors', 'temp_doubt',
+                               'counter'])
+    total_pop=0
+    # Creating a matrix filled with cells
+    for i in range(rows):
+        row = []
+        for j in range(cols):
+            if random.uniform(0, 1) <= threshold:
+                # If larger than threshold than the cell is filled human.
+                # The doubtness level is assigned according to the specified percentages
+                row.append(Cell(5, False, 0, 0, 0, 0, 0))
+                total_pop += 1
+            else:
+                row.append(Cell(0, False, 0, 0, 0, 0, 0))
+        matrix.append(row)
+
+    s1_count = int(s1*total_pop)
+    s2_count = int(s2*total_pop)
+    s3_count = int(s3 * total_pop)
+    s4_count = int(s4 * total_pop)
+    s1_prop=int(s1*10)
+    s2_prop=int(s2*10)
+    s3_prop = int(s3 * 10)
+    s4_prop = int(s4 * 10)
+
+    for i in range(rows):
+        for j in range(cols):
+            if matrix[i][j].doubt == 5:
+                if i == 0 or i % 10 < s1_prop:
+                    if s1_count > 0:
+                        matrix[i][j] = matrix[i][j]._replace(doubt=1)
+                        s1_count -= 1
+                        continue
+                    elif s4_count > 0:
+                        matrix[i][j] = matrix[i][j]._replace(doubt=4)
+                        s4_count -= 1
+                        continue
+                    elif s2_count > 0:
+                        matrix[i][j] = matrix[i][j]._replace(doubt=2)
+                        s2_count -= 1
+                        continue
+                    elif s3_count > 0:
+                        matrix[i][j] = matrix[i][j]._replace(doubt=3)
+                        s3_count -= 1
+                        continue
+                    else:
+                        matrix[i][j] = matrix[i][j]._replace(doubt=0)
+                        continue
+                elif i % 10 < s4_prop+s1_prop:
+                    if s4_count > 0:
+                        matrix[i][j] = matrix[i][j]._replace(doubt=4)
+                        s4_count -= 1
+                        continue
+                    elif s3_count > 0:
+                        matrix[i][j] = matrix[i][j]._replace(doubt=3)
+                        s3_count -= 1
+                        continue
+                    elif s2_count > 0:
+                        matrix[i][j] = matrix[i][j]._replace(doubt=2)
+                        s2_count -= 1
+                        continue
+                    elif s1_count > 0:
+                        matrix[i][j] = matrix[i][j]._replace(doubt=1)
+                        s1_count -= 1
+                        continue
+                    else:
+                        matrix[i][j] = matrix[i][j]._replace(doubt=0)
+                        continue
+                elif i % 10 < s4_prop+s1_prop+s2_prop:
+                    if s2_count > 0:
+                        matrix[i][j] = matrix[i][j]._replace(doubt=2)
+                        s2_count -= 1
+                        continue
+                    elif s4_count > 0:
+                        matrix[i][j] = matrix[i][j]._replace(doubt=4)
+                        s4_count -= 1
+                        continue
+                    elif s3_count > 0:
+                        matrix[i][j] = matrix[i][j]._replace(doubt=3)
+                        s3_count -= 1
+                        continue
+                    elif s1_count > 0:
+                        matrix[i][j] = matrix[i][j]._replace(doubt=1)
+                        s1_count -= 1
+                        continue
+                    else:
+                        matrix[i][j] = matrix[i][j]._replace(doubt=0)
+                        continue
+                elif i % 10 < s4_prop+s1_prop+s2_prop+s3_prop:
+                    if s3_count > 0:
+                        matrix[i][j] = matrix[i][j]._replace(doubt=3)
+                        s3_count -= 1
+                        continue
+                    elif s4_count > 0:
+                        matrix[i][j] = matrix[i][j]._replace(doubt=4)
+                        s4_count -= 1
+                        continue
+                    elif s2_count > 0:
+                        matrix[i][j] = matrix[i][j]._replace(doubt=2)
+                        s2_count -= 1
+                        continue
+
+                    elif s1_count > 0:
+                        matrix[i][j] = matrix[i][j]._replace(doubt=1)
+                        s1_count -= 1
+                        continue
+                    else:
+                        matrix[i][j] = matrix[i][j]._replace(doubt=0)
+                        continue
+
+    return matrix
+
+
+
 
 
 def create_matrix_s1():
@@ -711,5 +808,7 @@ def get_neighbors(matrix, i, j):
     return neighbors
 
 
-run_and_plot_strategy("fast")
-# plot_data()
+#create_data()
+#plot_data()
+
+run_and_plot_strategy("slow")
