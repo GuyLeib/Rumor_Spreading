@@ -215,7 +215,7 @@ def run_simulatations(matrix_type="reg", l_value=5, p=0.8, S1=0.6, S2=0.2, S3=0.
     pepole_per_generation = {}
     for i in range(75):
         pepole_per_generation[i] = []
-    for simulation in range(1):
+    for simulation in range(10):
         global matrix
         if matrix_type=="slow":
             matrix = slow_create_matrix()
@@ -564,6 +564,23 @@ def slow_create_matrix():
                         continue
                     else:
                         matrix[i][j] = matrix[i][j]._replace(doubt=0)
+                        continue
+                else:
+                    if s4_count > 0:
+                        matrix[i][j] = matrix[i][j]._replace(doubt=4)
+                        s4_count -= 1
+                        continue
+                    elif s3_count > 0:
+                        matrix[i][j] = matrix[i][j]._replace(doubt=3)
+                        s3_count -= 1
+                        continue
+                    elif s2_count > 0:
+                        matrix[i][j] = matrix[i][j]._replace(doubt=2)
+                        s2_count -= 1
+                        continue
+                    elif s1_count > 0:
+                        matrix[i][j] = matrix[i][j]._replace(doubt=1)
+                        s1_count -= 1
                         continue
 
     return matrix

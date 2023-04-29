@@ -267,7 +267,29 @@ def slow_create_matrix():
                     else:
                         matrix[i][j] = matrix[i][j]._replace(doubt=0)
                         continue
-
+                else:
+                    if s4_count > 0:
+                        matrix[i][j] = matrix[i][j]._replace(doubt=4)
+                        s4_count -= 1
+                        continue
+                    elif s3_count > 0:
+                        matrix[i][j] = matrix[i][j]._replace(doubt=3)
+                        s3_count -= 1
+                        continue
+                    elif s2_count > 0:
+                        matrix[i][j] = matrix[i][j]._replace(doubt=2)
+                        s2_count -= 1
+                        continue
+                    elif s1_count > 0:
+                        matrix[i][j] = matrix[i][j]._replace(doubt=1)
+                        s1_count -= 1
+                        continue
+    sum=0
+    for i in range(rows):
+        for j in range(cols):
+            if matrix[i][j].doubt == 5:
+                sum+=1
+    print("5 doubt: ", sum)
     return matrix
 
 
