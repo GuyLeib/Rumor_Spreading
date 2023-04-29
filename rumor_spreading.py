@@ -3,6 +3,7 @@ from collections import namedtuple
 import tkinter as tk
 import math
 from tkinter import messagebox
+from decimal import Decimal
 from tkinter import simpledialog
 
 # Global Variables: Number of rows, columns and game counter.
@@ -612,15 +613,13 @@ def submit_user_input(window, threshold_entry, gen_lim_entry, s1_entry, s2_entry
     except ValueError:
         s4 = 0.25
 
-    try:
-        strategy = strategy_entry.get()
-    except ValueError:
-        strategy = "normal"
+    strategy = strategy_entry.get()
+    valid_strategy=['normal', 'fast', 'slow']
+    if not strategy  in valid_strategy:
+        strategy='normal'
 
-    if strategy != ('normal' or 'fast' or 'slow'):
-        strategy = "normal"
-
-    if s1+s2+s3+s4 !=1:
+    s_sum = Decimal(str(s1)) + Decimal(str(s2)) + Decimal(str(s3)) + Decimal(str(s4))
+    if s_sum != 1:
         messagebox.showinfo("Wrong Values", "S1,S2,S3,S4 should be summed to 1")  # Creates the pop-up message box
         s1=0.25
         s2=0.25
