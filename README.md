@@ -5,7 +5,7 @@ This program simulates graphically a process of rumor spreading.
 # Using The Program:
 1. Run the "rumor_spreading.py" file.
 2.An opening screen will appear:
-<img width="598" alt="image" src="https://user-images.githubusercontent.com/92683819/235300137-98280aef-dc78-4511-99b1-b66a290882cc.png">
+<img width="400" alt="image" src="https://user-images.githubusercontent.com/92683819/235300137-98280aef-dc78-4511-99b1-b66a290882cc.png">
 3.In order to start playing press o "Strat Game" button and the next screen will apear:
 <img width="449" alt="image" src="https://user-images.githubusercontent.com/92683819/235300408-23b46b0c-951b-4eae-a74e-b0c26df0da19.png">
 4. in order to start by choosing a random cell to start spreading the rumor press on: <img width="29" alt="image" src="https://user-images.githubusercontent.com/92683819/235300486-c4697dea-e735-45b0-91e6-bfd5fc0c6cd3.png"> 
