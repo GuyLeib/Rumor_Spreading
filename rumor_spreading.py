@@ -2,6 +2,7 @@ import random
 from collections import namedtuple
 import tkinter as tk
 import math
+from tkinter import messagebox
 from tkinter import simpledialog
 
 # Global Variables: Number of rows, columns and game counter.
@@ -71,7 +72,7 @@ def max_neighbors():
                 row.append(Cell(0, False, 0, 0, 0, 0, 0))
 
         fast_matrix.append(row)
-    s4_list=[]
+    s4_list = []
     for i in range(rows):
         neighbor_row = []
         for j in range(cols):
@@ -80,7 +81,7 @@ def max_neighbors():
                 neighbors_to_add = [(ni, nj) for ni, nj in neighbors if (fast_matrix[ni][nj].doubt != 0)]
                 if not neighbors_to_add:
                     # assigning s4 to people without neighbors
-                    s4_list.append((i,j))
+                    s4_list.append((i, j))
                 neighbor_row.append(neighbors_to_add)
             else:
                 neighbor_row.append([])
@@ -101,25 +102,24 @@ def max_neighbors():
     # Extract only the cell indices from the sorted list
     highest_neighbors = [(i, j) for i, j, _ in sorted_neighbors]
 
-# First assign the s4 to the human without any neighbors.
+    # First assign the s4 to the human without any neighbors.
     for i, j in s4_list:
-        if num_s4>0:
+        if num_s4 > 0:
             fast_matrix[i][j] = fast_matrix[i][j]._replace(doubt=4)
-            num_s4 -=1
+            num_s4 -= 1
             continue
-        if num_s3>0:
+        if num_s3 > 0:
             fast_matrix[i][j] = fast_matrix[i][j]._replace(doubt=3)
-            num_s3 -=1
+            num_s3 -= 1
             continue
-        if num_s2>0:
+        if num_s2 > 0:
             fast_matrix[i][j] = fast_matrix[i][j]._replace(doubt=2)
-            num_s2 -=1
+            num_s2 -= 1
             continue
-        if num_s1>0:
+        if num_s1 > 0:
             fast_matrix[i][j] = fast_matrix[i][j]._replace(doubt=1)
-            num_s1 -=1
+            num_s1 -= 1
             continue
-
 
     for i, j in highest_neighbors:
         if num_s1 > 0:
@@ -160,7 +160,7 @@ def slow_create_matrix():
     # define the namedtuple
     Cell = namedtuple('Cell', ['doubt', 'received_rumor', 'received_gen', 'passed_gen', 'num_neighbors', 'temp_doubt',
                                'counter'])
-    total_pop=0
+    total_pop = 0
     # Creating a matrix filled with cells
     for i in range(rows):
         row = []
@@ -174,12 +174,12 @@ def slow_create_matrix():
                 row.append(Cell(0, False, 0, 0, 0, 0, 0))
         matrix.append(row)
 
-    s1_count = int(s1*total_pop)
-    s2_count = int(s2*total_pop)
+    s1_count = int(s1 * total_pop)
+    s2_count = int(s2 * total_pop)
     s3_count = int(s3 * total_pop)
     s4_count = int(s4 * total_pop)
-    s1_prop=int(s1*10)
-    s2_prop=int(s2*10)
+    s1_prop = int(s1 * 10)
+    s2_prop = int(s2 * 10)
     s3_prop = int(s3 * 10)
     s4_prop = int(s4 * 10)
 
@@ -206,7 +206,7 @@ def slow_create_matrix():
                     else:
                         matrix[i][j] = matrix[i][j]._replace(doubt=0)
                         continue
-                elif i % 10 < s4_prop+s1_prop:
+                elif i % 10 < s4_prop + s1_prop:
                     if s4_count > 0:
                         matrix[i][j] = matrix[i][j]._replace(doubt=4)
                         s4_count -= 1
@@ -226,7 +226,7 @@ def slow_create_matrix():
                     else:
                         matrix[i][j] = matrix[i][j]._replace(doubt=0)
                         continue
-                elif i % 10 < s4_prop+s1_prop+s2_prop:
+                elif i % 10 < s4_prop + s1_prop + s2_prop:
                     if s2_count > 0:
                         matrix[i][j] = matrix[i][j]._replace(doubt=2)
                         s2_count -= 1
@@ -246,7 +246,7 @@ def slow_create_matrix():
                     else:
                         matrix[i][j] = matrix[i][j]._replace(doubt=0)
                         continue
-                elif i % 10 < s4_prop+s1_prop+s2_prop+s3_prop:
+                elif i % 10 < s4_prop + s1_prop + s2_prop + s3_prop:
                     if s3_count > 0:
                         matrix[i][j] = matrix[i][j]._replace(doubt=3)
                         s3_count -= 1
@@ -284,11 +284,11 @@ def slow_create_matrix():
                         matrix[i][j] = matrix[i][j]._replace(doubt=1)
                         s1_count -= 1
                         continue
-    sum=0
+    sum = 0
     for i in range(rows):
         for j in range(cols):
             if matrix[i][j].doubt == 5:
-                sum+=1
+                sum += 1
     print("5 doubt: ", sum)
     return matrix
 
@@ -465,7 +465,8 @@ def pass_rumor_wrapper():
     gen, counter, per = get_stats()
     per = "{:.1f}".format(per)
     stats_label.config(
-        text="Generation {}: {} people knows the rumor - {} percent of the population".format(gen, counter, per),font="Tahoma 10 bold",bg='black',fg='white',relief='ridge')
+        text="Generation {}: {} people knows the rumor - {} percent of the population".format(gen, counter, per),
+        font=("Comic Sans MS", 8,'bold'), bg='black', fg='white', relief='ridge')
     root.update()
 
 
@@ -482,7 +483,8 @@ def pass_30_gens():
     gen, counter, per = get_stats()
     per = "{:.1f}".format(per)
     stats_label.config(
-        text="Generation {}: {} people knows the rumor - {} percent of the population".format(gen, counter, per),font="Tahoma 10 bold",bg='black',fg='white',relief='ridge')
+        text="Generation {}: {} people knows the rumor - {} percent of the population".format(gen, counter, per),
+        font=("Comic Sans MS", 8,'bold'), bg='black', fg='white', relief='ridge')
     root.update()
 
 
@@ -526,41 +528,44 @@ def get_user_input():
     user_input_window.geometry('400x600')  # Set window size
 
     # Create a label widget for the title
-    title_label = tk.Label(user_input_window, text="Enter new configuration", font=("Arial", 18))
+    title_label = tk.Label(user_input_window, text="Enter new configuration", font=("Comic Sans MS", 18))
     title_label.pack(pady=10)  # Add some padding
 
     # Create input fields for threshold, gen_lim, and var3
-    threshold_label = tk.Label(user_input_window, text="Enter the desired population density:")
+    threshold_label = tk.Label(user_input_window, text="Enter the desired population density: (0-1)",
+                               font=("Comic Sans MS", 8))
     threshold_label.pack(pady=10)
     threshold_entry = tk.Entry(user_input_window)
     threshold_entry.pack(pady=5)
 
-    gen_lim_label = tk.Label(user_input_window, text="Enter the generation limitation of spreading rumor:")
+    gen_lim_label = tk.Label(user_input_window, text="Enter the generation limitation of spreading rumor: (integer)",
+                             font=("Comic Sans MS", 8))
     gen_lim_label.pack(pady=10)
     gen_lim_entry = tk.Entry(user_input_window)
     gen_lim_entry.pack(pady=5)
 
-    s1_label = tk.Label(user_input_window, text="Enter the percentage of s1 people: (0-1)")
+    s1_label = tk.Label(user_input_window, text="Enter the percentage of s1 people: (0-1)", font=("Comic Sans MS", 8))
     s1_label.pack(pady=10)
     s1_entry = tk.Entry(user_input_window)
     s1_entry.pack(pady=5)
 
-    s2_label = tk.Label(user_input_window, text="Enter the percentage of s2 people: (0-1)")
+    s2_label = tk.Label(user_input_window, text="Enter the percentage of s2 people: (0-1)", font=("Comic Sans MS", 8))
     s2_label.pack(pady=10)
     s2_entry = tk.Entry(user_input_window)
     s2_entry.pack(pady=5)
 
-    s3_label = tk.Label(user_input_window, text="Enter the percentage of s3 people: (0-1)")
+    s3_label = tk.Label(user_input_window, text="Enter the percentage of s3 people: (0-1)", font=("Comic Sans MS", 8))
     s3_label.pack(pady=10)
     s3_entry = tk.Entry(user_input_window)
     s3_entry.pack(pady=5)
 
-    s4_label = tk.Label(user_input_window, text="Enter the percentage of s4 people: (0-1)")
+    s4_label = tk.Label(user_input_window, text="Enter the percentage of s4 people: (0-1)", font=("Comic Sans MS", 8))
     s4_label.pack(pady=10)
     s4_entry = tk.Entry(user_input_window)
     s4_entry.pack(pady=5)
 
-    strategy_label = tk.Label(user_input_window, text="Enter the game strategy: normal, fast or slow")
+    strategy_label = tk.Label(user_input_window, text="Enter the game strategy: normal, fast or slow",
+                              font=("Comic Sans MS", 8))
     strategy_label.pack(pady=10)
     strategy_entry = tk.Entry(user_input_window)
     strategy_entry.pack(pady=5)
@@ -577,14 +582,50 @@ def submit_user_input(window, threshold_entry, gen_lim_entry, s1_entry, s2_entry
     global welcome, config_label, lim_label, pop_label, s1_label, s2_label, s3_label, s4_label, strategy_label
 
     # Get user input values
-    threshold = float(threshold_entry.get())
-    gen_lim = int(gen_lim_entry.get())
-    s1 = float(s1_entry.get())
-    s2 = float(s2_entry.get())
-    s3 = float(s3_entry.get())
-    s4 = float(s4_entry.get())
-    strategy = strategy_entry.get()
+    try:
+        threshold = float(threshold_entry.get())
+    except ValueError:
+        threshold = 0.5
 
+    try:
+        gen_lim = int(gen_lim_entry.get())
+    except ValueError:
+        gen_lim = 5
+
+    try:
+        s1 = float(s1_entry.get())
+    except ValueError:
+        s1 = 0.25
+
+    try:
+        s2 = float(s2_entry.get())
+    except ValueError:
+        s2 = 0.25
+
+    try:
+        s3 = float(s3_entry.get())
+    except ValueError:
+        s3 = 0.25
+
+    try:
+        s4 = float(s4_entry.get())
+    except ValueError:
+        s4 = 0.25
+
+    try:
+        strategy = strategy_entry.get()
+    except ValueError:
+        strategy = "normal"
+
+    if strategy != ('normal' or 'fast' or 'slow'):
+        strategy = "normal"
+
+    if s1+s2+s3+s4 !=1:
+        messagebox.showinfo("Wrong Values", "S1,S2,S3,S4 should be summed to 1")  # Creates the pop-up message box
+        s1=0.25
+        s2=0.25
+        s3=0.25
+        s4=0.25
     # Change the labels on the welcome screen
     pop_label.config(text="Population density: {}".format(threshold))
 
@@ -615,15 +656,18 @@ def submit_user_input(window, threshold_entry, gen_lim_entry, s1_entry, s2_entry
 # This function will draw the buttons on the screen.
 def draw_buttons():
     # choose the first player:
-    start_button = tk.Button(root, text="Start", command=choose_first_wrapper)
+    start_button = tk.Button(root, text="Start", command=choose_first_wrapper, font=("Comic Sans MS", 8),
+                             relief="groove")
     start_button.pack(side='left')
     # start_button.place(x=500, y=1000)
     # pass the rumor:
-    next_gen_button = tk.Button(root, text="Next Generation", command=pass_rumor_wrapper)
+    next_gen_button = tk.Button(root, text="Next Generation", command=pass_rumor_wrapper, font=("Comic Sans MS", 8),
+                                relief="groove")
     next_gen_button.pack(side='right')
     # next_gen_button.place(x=500, y=0)
 
-    next_30_gens_button = tk.Button(root, text="30 Generations forward", command=pass_30_gens)
+    next_30_gens_button = tk.Button(root, text="30 Generations forward", command=pass_30_gens,
+                                    font=("Comic Sans MS", 8), relief="groove")
     next_30_gens_button.pack(side='bottom')
 
 
@@ -645,43 +689,44 @@ def welcome_screen():
     welcome = tk.Toplevel(root)
     welcome.geometry('800x600')  # Set window size
 
-
     # Create a label widget for the title
-    title_label = tk.Label(welcome, text="Welcome to the Game of Life : Spreading Rumor edition", font=("Cambria Math", 18,'bold'))
-    title_label.pack()  # Add some padding
-
+    title_label = tk.Label(welcome, text="Welcome to the Game of Life : Spreading Rumor edition",
+                           font=("Comic Sans MS", 18, 'bold'))
+    title_label.pack(pady=20)  # Add some padding
 
     # Create a label widget for the configurations
-    config_label = tk.Label(welcome, text="The configurations are:", font=("Arial", 14))
-    config_label.pack(pady=5)
+    config_label = tk.Label(welcome, text="The configurations are:", font=("Comic Sans MS", 14))
+    config_label.pack(pady=7)
 
-    pop_label = tk.Label(welcome, text="Population density: {}".format(threshold), font=("Arial", 14))
+    pop_label = tk.Label(welcome, text="Population density: {}".format(threshold), font=("Comic Sans MS", 14))
     pop_label.pack(pady=5)
 
     lim_label = tk.Label(welcome, text="Generation limitation of spreading rumor: {}".format(gen_lim),
-                         font=("Arial", 14))
+                         font=("Comic Sans MS", 14))
     lim_label.pack(pady=5)
 
-    s1_label = tk.Label(welcome, text="S1 proportion: {}".format(s1), font=("Arial", 14))
+    s1_label = tk.Label(welcome, text="S1 proportion: {}".format(s1), font=("Comic Sans MS", 14))
     s1_label.pack(pady=5)
 
-    s2_label = tk.Label(welcome, text="S2 proportion: {}".format(s2), font=("Arial", 14))
+    s2_label = tk.Label(welcome, text="S2 proportion: {}".format(s2), font=("Comic Sans MS", 14))
     s2_label.pack(pady=5)
 
-    s3_label = tk.Label(welcome, text="S3 proportion: {}".format(s3), font=("Arial", 14))
+    s3_label = tk.Label(welcome, text="S3 proportion: {}".format(s3), font=("Comic Sans MS", 14))
     s3_label.pack(pady=5)
 
-    s4_label = tk.Label(welcome, text="S4 proportion: {}".format(s4), font=("Arial", 14))
+    s4_label = tk.Label(welcome, text="S4 proportion: {}".format(s4), font=("Comic Sans MS", 14))
     s4_label.pack(pady=5)
 
-    strategy_label = tk.Label(welcome, text="Game strategy: {}".format(strategy), font=("Arial", 14))
+    strategy_label = tk.Label(welcome, text="Game strategy: {}".format(strategy), font=("Comic Sans MS", 14))
     strategy_label.pack(pady=5)
 
     # Add a button widget to start the game
-    start_button = tk.Button(welcome, text="Start Game", command=lambda: start_game(welcome),relief="groove")
+    start_button = tk.Button(welcome, text="Start Game", command=lambda: start_game(welcome), font=("Comic Sans MS", 8),
+                             relief="groove")
     start_button.pack(pady=10)
 
-    input_button = tk.Button(welcome, text="Change configuration", command=get_user_input,relief="groove")
+    input_button = tk.Button(welcome, text="Change configuration", command=get_user_input, font=("Comic Sans MS", 8),
+                             relief="groove")
     input_button.pack(pady=10)
 
     welcome.wait_window()  # Wait for the welcome window to be destroyed
