@@ -18,7 +18,9 @@ Then, in order to continue spreading the rumor by on generation each time you ca
 2. The next screen will appear:
 <img width="299" alt="image" src="https://user-images.githubusercontent.com/92683819/235301148-ee623b1c-49a2-4927-8c70-13c1bf7ac8c2.png">
 3. You can changw some of the parameters and the rest of them will remain in the default values. After inserting the parametes you want to change press on "submit".
+
 4. In case that the inserted parmeters are invalid a warning messegae will appear (after pressing on "submit") and the configuration will remain in the default parameters:
+
 5. <img width="206" alt="image" src="https://user-images.githubusercontent.com/92683819/235301298-d94d8b48-7fd5-43a2-afe4-9c2c9dc730e3.png">
 
 
