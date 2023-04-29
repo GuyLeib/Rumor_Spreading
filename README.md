@@ -1,12 +1,19 @@
 # Rumor_Spreading
 
-This program simulates graphically a process of rumor spreading.
+This program is a GUI implemenation of Game of Life - Rumor spreading variation.
+In this variation there is 100*100 grid which simulate a human population. 
+The colored cells represent the humans, and the four colors represent 4 doubt levels: 
+S1 - believe every rumor they hear. (colored in purple)
+S2 - will believe a rumor in a probability of 1/3. (colored in light-blue)
+S3 - will believe a rumor in a probability of 2/3. (colored in green)
+S4 - don't believe to any rumor. (colored in yellow)
 
 # Using The Program:
-1. Run the "rumor_spreading.py" file.
-2. An opening screen will appear:
+1. Run the "rumor_spreading.py" file or just double click on the rumor_spreading.exe file.
+2. A welcome screen will appear:
+On the screen you can see the current game configuration, which you can either change using the change configuration button or start play with the current configurations.
 <img width="400" alt="image" src="https://user-images.githubusercontent.com/92683819/235300137-98280aef-dc78-4511-99b1-b66a290882cc.png">
-3. In order to start playing press o "Strat Game" button and the next screen will apear:
+3. In order to start playing press the "Strat Game" button and the next screen will apear:
 <img width="400" alt="image" src="https://user-images.githubusercontent.com/92683819/235300408-23b46b0c-951b-4eae-a74e-b0c26df0da19.png">
 4. in order to start by choosing a random cell to start spreading the rumor press on: <img width="29" alt="image" src="https://user-images.githubusercontent.com/92683819/235300486-c4697dea-e735-45b0-91e6-bfd5fc0c6cd3.png"> 
 The first spreader will be marked in black as followos:
