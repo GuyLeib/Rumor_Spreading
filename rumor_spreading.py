@@ -366,7 +366,6 @@ def pass_rumor():
                             spread_to_neighbors(i, j)
                             # update L counter:
                             matrix[i][j] = matrix[i][j]._replace(counter=gen_lim)
-                            game_counter += 1
                             return
                         # if the cell already spread the rumor + the generation is game_counter-1 + l_counter ==0:
                     if matrix[i][j].received_gen == game_counter - 1 and matrix[i][j].counter == 0:
