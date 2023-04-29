@@ -37,5 +37,7 @@ Then, you can either spread the rumor one generation at a time using the Next Ge
 4. In case that the inserted parmeters that are invalid a warning messegae will appear (after pressing on "submit") and the configuration will remain in the default parameters:
 <img width="206" alt="image" src="https://user-images.githubusercontent.com/92683819/235301298-d94d8b48-7fd5-43a2-afe4-9c2c9dc730e3.png">
 
-
+# Addtional Files:
+The "statistics.py" file is designed to analyze and gain insights into the dynamics of rumor spreading.
+This file contains several functions that can run simulations with different sets of parameters and plot various graphs to visualize the impact of each parameter on the rate of rumor spreading.
 
