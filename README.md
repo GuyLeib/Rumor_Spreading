@@ -27,15 +27,14 @@ On the screen you can see the current game configuration, which you can either c
 The first spreader will be marked in black as follows: <img align = "center" img width="68" alt="image" src="https://user-images.githubusercontent.com/92683819/235300549-bb0a2ca8-ce83-4b12-aa09-f788e4586f5f.png">
 
  
-Then, you can either spread the rumor one generation at a time using the Next Generation button <img align = "center" img width="71" alt="image" src="https://user-images.githubusercontent.com/92683819/235300581-ed52aa4b-4213-45eb-8cfe-189969360b31.png"> or you can skip 30 Generations forward using the Next 30 Generations button <h3><img align="center" height="30" src="https://user-images.githubusercontent.com/92683819/235300637-2fd2387d-1f82-4fc8-9ce8-4d3dda6f9915.png"> TECHNOLOGIES</h3>
-
+Then, you can either spread the rumor one generation at a time using the Next Generation button <img align = "center" img width="71" alt="image" src="https://user-images.githubusercontent.com/92683819/235300581-ed52aa4b-4213-45eb-8cfe-189969360b31.png"> or you can skip 30 Generations forward using the 30 Generations Forward button <img align = "center" img width="102" alt="image" src="https://user-images.githubusercontent.com/92683819/235300637-2fd2387d-1f82-4fc8-9ce8-4d3dda6f9915.png">
 
 # Changing Configuraion:
 1. In order to change configuration run the program and press on "change configuraion" in the opening screen.
 2. The next screen will appear:
 <img width="299" alt="image" src="https://user-images.githubusercontent.com/92683819/235301148-ee623b1c-49a2-4927-8c70-13c1bf7ac8c2.png">
-3. You can changw some of the parameters and the rest of them will remain in the default values. After inserting the parametes you want to change press on "submit". 
-4. In case that the inserted parmeters are invalid a warning messegae will appear (after pressing on "submit") and the configuration will remain in the default parameters: <img width="206" alt="image" src="https://user-images.githubusercontent.com/92683819/235301298-d94d8b48-7fd5-43a2-afe4-9c2c9dc730e3.png">
+3. The valid values for each parmeter is written in the parentheses. You can also change just some of the parameters and the rest of them will remain as the default values. After inserting the parametes you want to change press on "submit". 
+4. In case that the inserted parmeters that are invalid a warning messegae will appear (after pressing on "submit") and the configuration will remain in the default parameters: <img width="206" alt="image" src="https://user-images.githubusercontent.com/92683819/235301298-d94d8b48-7fd5-43a2-afe4-9c2c9dc730e3.png">
 
 
 
