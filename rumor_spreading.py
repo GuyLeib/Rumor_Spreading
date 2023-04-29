@@ -395,15 +395,15 @@ def pass_rumor():
 def draw_cell(matrix, i, j, flag=False):
     cell = matrix[i][j]
     if cell.doubt == 1:
-        color = '#D5F5FF'
+        color = '#ce97bd'
     if cell.doubt == 2:
-        color = '#ADD8E6'
+        color = '#add1f5'
     if cell.doubt == 3:
-        color = "#87CEEB"
+        color = "#bae6af"
     if cell.doubt == 4:
-        color = "#6495ED"
+        color = "#f3d997"
     if cell.received_rumor:
-        color = '#006400'
+        color = 'black'
     if cell.doubt == 0:
         color = 'white'
     x1 = j * 6
@@ -623,20 +623,22 @@ def welcome_screen():
     welcome = tk.Toplevel(root)
     welcome.geometry('800x600')  # Set window size
 
+
     # Create a label widget for the title
-    title_label = tk.Label(welcome, text="Welcome to the Game of Life : Spreading Rumor edition", font=("Arial", 20))
-    title_label.pack(pady=20)  # Add some padding
+    title_label = tk.Label(welcome, text="Welcome to the Game of Life : Spreading Rumor edition", font=("Cambria Math", 18,'bold'))
+    title_label.pack()  # Add some padding
+
 
     # Create a label widget for the configurations
     config_label = tk.Label(welcome, text="The configurations are:", font=("Arial", 14))
-    config_label.pack(pady=10)
+    config_label.pack(pady=5)
 
     pop_label = tk.Label(welcome, text="Population density: {}".format(threshold), font=("Arial", 14))
-    pop_label.pack(pady=10)
+    pop_label.pack(pady=5)
 
     lim_label = tk.Label(welcome, text="Generation limitation of spreading rumor: {}".format(gen_lim),
                          font=("Arial", 14))
-    lim_label.pack(pady=10)
+    lim_label.pack(pady=5)
 
     s1_label = tk.Label(welcome, text="S1 proportion: {}".format(s1), font=("Arial", 14))
     s1_label.pack(pady=5)
@@ -651,14 +653,14 @@ def welcome_screen():
     s4_label.pack(pady=5)
 
     strategy_label = tk.Label(welcome, text="Game strategy: {}".format(strategy), font=("Arial", 14))
-    strategy_label.pack(pady=10)
+    strategy_label.pack(pady=5)
 
     # Add a button widget to start the game
-    start_button = tk.Button(welcome, text="Start Game", command=lambda: start_game(welcome))
-    start_button.pack(pady=20)
+    start_button = tk.Button(welcome, text="Start Game", command=lambda: start_game(welcome),relief="groove")
+    start_button.pack(pady=10)
 
-    input_button = tk.Button(welcome, text="Change configuration", command=get_user_input)
-    input_button.pack(pady=20)
+    input_button = tk.Button(welcome, text="Change configuration", command=get_user_input,relief="groove")
+    input_button.pack(pady=10)
 
     welcome.wait_window()  # Wait for the welcome window to be destroyed
 
