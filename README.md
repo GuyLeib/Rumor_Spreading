@@ -36,6 +36,7 @@ Then, you can either spread the rumor one generation at a time using the Next Ge
 
 The "game strategy" parameter determines how the individuals with varying doubt levels are organized on the board.
 For instance, in the "fast" configuration, the cells are arranged in such a way that those with a lot of neighbors are assigned to the s1 doubtness level.
+
 3. The valid values for each parmeter is written in the parentheses. You can also change just some of the parameters and the rest of them will remain as the default values. After inserting the parametes you want to change press on "submit". 
 4. In case that the inserted parmeters that are invalid a warning messegae will appear (after pressing on "submit") and the configuration will remain in the default parameters:
 <img width="206" alt="image" src="https://user-images.githubusercontent.com/92683819/235301298-d94d8b48-7fd5-43a2-afe4-9c2c9dc730e3.png">
