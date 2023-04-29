@@ -33,8 +33,9 @@ Then, you can either spread the rumor one generation at a time using the Next Ge
 1. In order to change configuration run the program and press on "change configuraion" in the opening screen.
 2. The next screen will appear:
 <img width="299" alt="image" src="https://user-images.githubusercontent.com/92683819/235301148-ee623b1c-49a2-4927-8c70-13c1bf7ac8c2.png">
-The
+
 The "game strategy" parameter determines how the individuals with varying doubt levels are organized on the board.
+
 For instance, in the "fast" configuration, the cells are arranged in such a way that those with a lot of neighbors are assigned to the s1 doubtness level.
 
 3. The valid values for each parmeter is written in the parentheses. You can also change just some of the parameters and the rest of them will remain as the default values. After inserting the parametes you want to change press on "submit". 
