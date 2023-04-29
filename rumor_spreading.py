@@ -467,7 +467,7 @@ def pass_rumor_wrapper():
     per = "{:.1f}".format(per)
     stats_label.config(
         text="Generation {}: {} people knows the rumor - {} percent of the population".format(gen, counter, per),
-        font=("Comic Sans MS", 8,'bold'), bg='black', fg='white', relief='ridge')
+        font=("Comic Sans MS", 8, 'bold'), bg='black', fg='white', relief='ridge')
     root.update()
 
 
@@ -485,7 +485,7 @@ def pass_30_gens():
     per = "{:.1f}".format(per)
     stats_label.config(
         text="Generation {}: {} people knows the rumor - {} percent of the population".format(gen, counter, per),
-        font=("Comic Sans MS", 8,'bold'), bg='black', fg='white', relief='ridge')
+        font=("Comic Sans MS", 8, 'bold'), bg='black', fg='white', relief='ridge')
     root.update()
 
 
@@ -585,46 +585,71 @@ def submit_user_input(window, threshold_entry, gen_lim_entry, s1_entry, s2_entry
     # Get user input values
     try:
         threshold = float(threshold_entry.get())
+        if threshold < 0 or threshold > 1:
+            messagebox.showinfo("Wrong Values", "Density population valid values are between 0 to 1")
+            threshold = 0.5
     except ValueError:
         threshold = 0.5
 
     try:
         gen_lim = int(gen_lim_entry.get())
+        if gen_lim < 0:
+            messagebox.showinfo("Wrong Values", "Generation limitation valid value are positive integers")
+            gen_lim = 5
     except ValueError:
         gen_lim = 5
+        messagebox.showinfo("Wrong Values", "Generation limitation valid value are positive integers")
 
     try:
         s1 = float(s1_entry.get())
+        if s1 < 0:
+            messagebox.showinfo("Wrong Values", "Valid range for s proportion is 0 to 1")
     except ValueError:
         s1 = 0.25
+        messagebox.showinfo("Wrong Values", "Valid range for s proportion is 0 to 1")
 
     try:
         s2 = float(s2_entry.get())
+        if s2<0:
+            messagebox.showinfo("Wrong Values", "Valid range for s proportion is 0 to 1")
+            s2 = 0.25
     except ValueError:
         s2 = 0.25
+        messagebox.showinfo("Wrong Values", "Valid range for s proportion is 0 to 1")
 
     try:
         s3 = float(s3_entry.get())
+        if s3<0:
+            messagebox.showinfo("Wrong Values", "Valid range for s proportion is 0 to 1")
+            s3 = 0.25
     except ValueError:
         s3 = 0.25
+        messagebox.showinfo("Wrong Values", "Valid range for s proportion is 0 to 1")
 
     try:
         s4 = float(s4_entry.get())
+        if s4<0:
+            messagebox.showinfo("Wrong Values", "Valid range for s proportion is 0 to 1")
+            s4 = 0.25
     except ValueError:
         s4 = 0.25
+        messagebox.showinfo("Wrong Values", "Valid range for s proportion is 0 to 1")
 
     strategy = strategy_entry.get()
-    valid_strategy=['normal', 'fast', 'slow']
-    if not strategy  in valid_strategy:
-        strategy='normal'
+
+    valid_strategy = ['normal', 'fast', 'slow']
+    if not strategy in valid_strategy:
+        strategy = 'normal'
+        messagebox.showinfo("Wrong Values", "Valid strategies values are: normal, fast or slow")
 
     s_sum = Decimal(str(s1)) + Decimal(str(s2)) + Decimal(str(s3)) + Decimal(str(s4))
     if s_sum != 1:
         messagebox.showinfo("Wrong Values", "S1,S2,S3,S4 should be summed to 1")  # Creates the pop-up message box
-        s1=0.25
-        s2=0.25
-        s3=0.25
-        s4=0.25
+        s1 = 0.25
+        s2 = 0.25
+        s3 = 0.25
+        s4 = 0.25
+
     # Change the labels on the welcome screen
     pop_label.config(text="Population density: {}".format(threshold))
 
