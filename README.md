@@ -22,7 +22,7 @@ On the screen you can see the current game configuration, which you can either c
 3. In order to start playing press the "Strat Game" button and the next screen will apear:
 <img width="400" alt="image" src="https://user-images.githubusercontent.com/92683819/235300408-23b46b0c-951b-4eae-a74e-b0c26df0da19.png">
 
-4.To start spreading the rumor you need to assign the first person who knows the rumor, this will be done using the start button. <img align = "left" img width="29" alt="image" src="https://user-images.githubusercontent.com/92683819/235300486-c4697dea-e735-45b0-91e6-bfd5fc0c6cd3.png">
+4.To start spreading the rumor you need to assign the first person who knows the rumor, this will be done using the start button. <img align = "center" img width="29" alt="image" src="https://user-images.githubusercontent.com/92683819/235300486-c4697dea-e735-45b0-91e6-bfd5fc0c6cd3.png">
 
 The first spreader will be marked in black as follows: <img align = "center" img width="68" alt="image" src="https://user-images.githubusercontent.com/92683819/235300549-bb0a2ca8-ce83-4b12-aa09-f788e4586f5f.png">
 
