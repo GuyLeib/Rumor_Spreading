@@ -285,50 +285,49 @@ def slow_create_matrix():
                         matrix[i][j] = matrix[i][j]._replace(doubt=1)
                         s1_count -= 1
                         continue
-    sum = 0
-    for i in range(rows):
-        for j in range(cols):
-            if matrix[i][j].doubt == 5:
-                sum += 1
-    print("5 doubt: ", sum)
     return matrix
 
-
+# This function chooses  randomly the first cell to start spread the rumor.
 def choose_first():
     global matrix
     while True:
         row = random.randint(0, 99)
         column = random.randint(0, 99)
+        # if the cell is occupied - assign it to get the rumor:
         if matrix[row][column].doubt != 0:
             matrix[row][column] = matrix[row][column]._replace(received_rumor=True)
             matrix[row][column] = matrix[row][column]._replace(received_gen=game_counter)
             return
 
-
+# This function checks if the cell believes the rumor.
 def believe_rumor(doubt_level):
+    # doubt 1 always believes:
     if doubt_level == 1:
         return True
+    # doubt 2 believes by chance of 2/3:
     elif doubt_level == 2:
         if random.uniform(0, 1) >= (1 / 3):
             return True
         else:
             return False
+    # doubt 3 believes by chance of 1/3:
     elif doubt_level == 3:
         if random.uniform(0, 1) < (1 / 3):
             return True
         else:
             return False
+    # doubt 4 never believes:
     elif doubt_level == 4:
         return False
 
-
+# This function returns a doubt level that is smaller in 1 from the original one.
 def define_temp_doubt(doubt):
     if doubt != 1:
         return doubt - 1
     else:
         return 1
 
-
+# This function updated all the relevant parameters when a cell recieves a rumor:
 def get_rumor(cell):
     global game_counter
     # check if cell is not none:
@@ -350,7 +349,7 @@ def get_rumor(cell):
             cell = cell._replace(temp_doubt=define_temp_doubt(cell.doubt))
     return cell
 
-
+# This function spread the rumor to all the neighbors of the given cell.
 def spread_to_neighbors(row, column):
     global matrix
     global game_counter
@@ -373,6 +372,10 @@ def spread_to_neighbors(row, column):
             matrix[row][column + 1] = get_rumor(matrix[row][column + 1])
 
 
+"""
+ This function loops over all the cells in the board and spreads the rumor 
+from the cells which heard it and believes it:
+"""
 def pass_rumor():
     global matrix
     global gen_lim
@@ -435,7 +438,7 @@ def draw_cell(matrix, i, j, flag=False):
     y2 = y1 + 6
     canvas.create_rectangle(x1, y1, x2, y2, fill=color, outline="")
 
-
+# This function loops over the board and calls a function that draws each cell.
 def draw_all_cells(matrix, flag=False):
     # Draw all cells on the canvas
     for i in range(rows):
