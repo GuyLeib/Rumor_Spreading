@@ -596,6 +596,8 @@ def submit_user_input(window, threshold_entry, gen_lim_entry, s1_entry, s2_entry
             messagebox.showinfo("Wrong Values", "Density population valid values are between 0 to 1")
             threshold = 0.5
     except ValueError:
+        if threshold_entry.get().strip():
+            messagebox.showinfo("Wrong Values", "Density population valid values are between 0 to 1")
         threshold = 0.5
 
     try:
@@ -604,16 +606,18 @@ def submit_user_input(window, threshold_entry, gen_lim_entry, s1_entry, s2_entry
             messagebox.showinfo("Wrong Values", "Generation limitation valid value are positive integers")
             gen_lim = 5
     except ValueError:
+        if gen_lim_entry.get().strip():
+            messagebox.showinfo("Wrong Values", "Generation limitation valid value are positive integers")
         gen_lim = 5
-        messagebox.showinfo("Wrong Values", "Generation limitation valid value are positive integers")
 
     try:
         s1 = float(s1_entry.get())
         if s1 < 0:
             messagebox.showinfo("Wrong Values", "Valid range for s proportion is 0 to 1")
     except ValueError:
+        if s1_entry.get().strip():
+            messagebox.showinfo("Wrong Values", "Valid range for s proportion is 0 to 1")
         s1 = 0.25
-        messagebox.showinfo("Wrong Values", "Valid range for s proportion is 0 to 1")
 
     try:
         s2 = float(s2_entry.get())
@@ -621,8 +625,9 @@ def submit_user_input(window, threshold_entry, gen_lim_entry, s1_entry, s2_entry
             messagebox.showinfo("Wrong Values", "Valid range for s proportion is 0 to 1")
             s2 = 0.25
     except ValueError:
+        if s2_entry.get().strip():
+            messagebox.showinfo("Wrong Values", "Valid range for s proportion is 0 to 1")
         s2 = 0.25
-        messagebox.showinfo("Wrong Values", "Valid range for s proportion is 0 to 1")
 
     try:
         s3 = float(s3_entry.get())
@@ -630,8 +635,9 @@ def submit_user_input(window, threshold_entry, gen_lim_entry, s1_entry, s2_entry
             messagebox.showinfo("Wrong Values", "Valid range for s proportion is 0 to 1")
             s3 = 0.25
     except ValueError:
+        if s3_entry.get().strip():
+            messagebox.showinfo("Wrong Values", "Valid range for s proportion is 0 to 1")
         s3 = 0.25
-        messagebox.showinfo("Wrong Values", "Valid range for s proportion is 0 to 1")
 
     try:
         s4 = float(s4_entry.get())
@@ -639,15 +645,17 @@ def submit_user_input(window, threshold_entry, gen_lim_entry, s1_entry, s2_entry
             messagebox.showinfo("Wrong Values", "Valid range for s proportion is 0 to 1")
             s4 = 0.25
     except ValueError:
+        if s4_entry.get().strip():
+            messagebox.showinfo("Wrong Values", "Valid range for s proportion is 0 to 1")
         s4 = 0.25
-        messagebox.showinfo("Wrong Values", "Valid range for s proportion is 0 to 1")
 
     strategy = strategy_entry.get()
 
     valid_strategy = ['normal', 'fast', 'slow']
     if not strategy in valid_strategy:
+        if strategy.strip():
+            messagebox.showinfo("Wrong Values", "Valid strategies values are: normal, fast or slow")
         strategy = 'normal'
-        messagebox.showinfo("Wrong Values", "Valid strategies values are: normal, fast or slow")
 
     s_sum = Decimal(str(s1)) + Decimal(str(s2)) + Decimal(str(s3)) + Decimal(str(s4))
     if s_sum != 1:
