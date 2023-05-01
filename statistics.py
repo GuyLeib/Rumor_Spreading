@@ -140,6 +140,7 @@ def pass_rumor():
                             return
                         # if the cell already spread the rumor + the generation is game_counter-1 + l_counter ==0:
                     if matrix[i][j].received_gen == game_counter - 1 and matrix[i][j].counter == 0:
+                        print(matrix[i][j].counter)
                         # check if the cell has a temp doubt:
                         if matrix[i][j].temp_doubt != 0:
                             believe = believe_rumor(matrix[i][j].temp_doubt)
@@ -215,7 +216,7 @@ def run_simulatations(matrix_type="reg", l_value=5, p=0.8, S1=0.6, S2=0.2, S3=0.
     pepole_per_generation = {}
     for i in range(75):
         pepole_per_generation[i] = []
-    for simulation in range(10):
+    for simulation in range(3):
         global matrix
         if matrix_type=="slow":
             matrix = slow_create_matrix()
@@ -471,11 +472,10 @@ def slow_create_matrix():
             else:
                 row.append(Cell(0, False, 0, 0, 0, 0, 0))
         matrix.append(row)
-
-    s1_count = int(s1*total_pop)
-    s2_count = int(s2*total_pop)
+    s1_count = int(s1 * total_pop)
+    s2_count = int(s2 * total_pop)
     s3_count = int(s3 * total_pop)
-    s4_count = int(s4 * total_pop)
+    s4_count = total_pop-s1_count-s2_count-s3_count
     s1_prop=int(s1*10)
     s2_prop=int(s2*10)
     s3_prop = int(s3 * 10)
@@ -584,9 +584,6 @@ def slow_create_matrix():
                         continue
 
     return matrix
-
-
-
 
 
 def create_matrix_s1():
@@ -826,6 +823,6 @@ def get_neighbors(matrix, i, j):
 
 
 #create_data()
-#plot_data()
+plot_data()
 
-run_and_plot_strategy("slow")
+#run_and_plot_strategy("slow")
