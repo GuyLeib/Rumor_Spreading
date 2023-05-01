@@ -30,6 +30,7 @@ The first spreader will be marked in black as follows: <img align = "center" img
 Then, you can either spread the rumor one generation at a time using the Next Generation button <img align = "center" img width="71" alt="image" src="https://user-images.githubusercontent.com/92683819/235300581-ed52aa4b-4213-45eb-8cfe-189969360b31.png"> or you can skip 30 Generations forward using the 30 Generations Forward button <img align = "center" img width="102" alt="image" src="https://user-images.githubusercontent.com/92683819/235300637-2fd2387d-1f82-4fc8-9ce8-4d3dda6f9915.png">
 As the rumor starts to spread, a section appears at the bottom of the board, showing the current generation,the number of people who have heard it and the corresponding percentage:
 <img align = "center" img width="420" alt="image" src="https://user-images.githubusercontent.com/92683819/235434883-26962350-264c-43b8-a258-e5f74d145b2d.png">
+All the cells  which heard rumor will be colored in black for the rest of the simulation.
 # Changing Configuraion:
 1. In order to change configuration run the program and press on "change configuraion" in the opening screen.
 2. The next screen will appear:
