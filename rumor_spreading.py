@@ -285,7 +285,7 @@ def slow_create_matrix():
                         matrix[i][j] = matrix[i][j]._replace(doubt=1)
                         s1_count -= 1
                         continue
-
+    return matrix
 
 def choose_first():
     global matrix
