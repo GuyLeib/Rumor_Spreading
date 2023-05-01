@@ -178,7 +178,7 @@ def slow_create_matrix():
     s1_count = int(s1 * total_pop)
     s2_count = int(s2 * total_pop)
     s3_count = int(s3 * total_pop)
-    s4_count = int(s4 * total_pop)
+    s4_count = total_pop-s1_count-s2_count-s3_count
     s1_prop = int(s1 * 10)
     s2_prop = int(s2 * 10)
     s3_prop = int(s3 * 10)
@@ -285,13 +285,6 @@ def slow_create_matrix():
                         matrix[i][j] = matrix[i][j]._replace(doubt=1)
                         s1_count -= 1
                         continue
-    sum = 0
-    for i in range(rows):
-        for j in range(cols):
-            if matrix[i][j].doubt == 5:
-                sum += 1
-    print("5 doubt: ", sum)
-    return matrix
 
 
 def choose_first():
