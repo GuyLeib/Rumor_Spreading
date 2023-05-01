@@ -31,7 +31,7 @@ Then, you can either spread the rumor one generation at a time using the Next Ge
 As the rumor starts to spread, a section appears at the bottom of the board, showing the current generation,the number of people who have heard it and the corresponding percentage:
 <img align = "center" img width="420" alt="image" src="https://user-images.githubusercontent.com/92683819/235434883-26962350-264c-43b8-a258-e5f74d145b2d.png">
 
-All the cells  which heard rumor will be colored in black for the rest of the simulation.
+All the cells which heard the rumor will be colored in black for the rest of the simulation.
 # Changing Configuraion:
 1. In order to change configuration run the program and press on "change configuraion" in the opening screen.
 2. The next screen will appear:
